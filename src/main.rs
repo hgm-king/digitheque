@@ -11,8 +11,8 @@ use warp::{
 };
 
 use digitheque::{
-    assets_api, config::Config, db_conn::DbConn, handle_rejection, handlers, routes, user_api,
-    Context, terminal_error_handler
+    assets_api, config::Config, db_conn::DbConn, handle_rejections, handlers, routes,
+    terminal_error_handler, user_api, Context,
 };
 
 #[tokio::main]

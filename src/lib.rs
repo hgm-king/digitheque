@@ -30,8 +30,13 @@ impl reject::Reject for OldCookie {}
 pub struct ResourceError {
     message: String,
 }
-
 impl reject::Reject for ResourceError {}
+
+#[derive(Debug)]
+pub struct ServerError {
+    message: String,
+}
+impl reject::Reject for ServerError {}
 
 #[derive(Clone, Debug)]
 pub struct Context {
@@ -48,19 +53,13 @@ impl Context {
     }
 }
 
-pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Rejection> {
+pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> {
     tracing::error!("{:?}", err);
-    // if let Some(ResourceError::Duplicate(_)) = err.find::<ResourceError>() {
-    //     let code = StatusCode::BAD_REQUEST;
-    //     let html = views::error::error_page(code, "Duplicate resource");
-    //     Ok(warp::reply::with_status(warp::reply::html(html), code))
-    // } else
-    // if let Some(ResourceError::TooMany(_)) = err.find::<ResourceError>() {
-    //     let code = StatusCode::BAD_REQUEST;
-    //     let html = views::error::error_page(code, "Too many resources");
-    //     Ok(warp::reply::with_status(html, code))
-    // } else
-    if let Some(_) = err.find::<NotAuthorized>() {
+    if let Some(e) = err.find::<ResourceError>() {
+        let code = StatusCode::BAD_REQUEST;
+        let html = views::error::error_page(code, &e.message);
+        Ok(warp::reply::with_status(warp::reply::html(html), code))
+    } else if let Some(_) = err.find::<NotAuthorized>() {
         let code = StatusCode::FORBIDDEN;
         let html = views::error::error_page(code, "You are not authorized to do this");
         Ok(warp::reply::with_status(warp::reply::html(html), code))

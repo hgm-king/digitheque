@@ -1,9 +1,14 @@
 use html_to_string_macro::html;
 use std::fmt::{self, Display};
 
-use super::{Body, Document, Head};
+use super::{
+    common::{Footer, Header},
+    Body, Document, Head,
+};
 
-pub struct Signup;
+pub struct Signup {
+    error: String,
+}
 
 impl Display for Signup {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -11,9 +16,11 @@ impl Display for Signup {
             f,
             "{}",
             html! {
-                <section class="signup single-form">
-                    <h4>"Signup Form"</h4>
-                    <form action="/user/signup" method="POST">
+                <main>
+                    <header>
+                        <h1>"Signup Form"</h1>
+                    </header>
+                    <form id="signup" action="/user/signup" method="POST">
                         <fieldset class="signup-fields">
                             <legend>"User Credentials"</legend>
                             <a href="/user/login">"Have an account?"</a>
@@ -29,17 +36,19 @@ impl Display for Signup {
                                 <span>"Confirm Password:"</span>
                                 <input type="password" name="confirm_password" max=48 />
                             </label>
-                            <div class="error">"error"</div>
+                            <div class="error">{self.error.clone()}</div>
                             <button type="submit">"Signup"</button>
                         </fieldset>
                     </form>
-                </section>
+                </main>
             }
         )
     }
 }
 
-pub struct Login;
+pub struct Login {
+    error: String,
+}
 
 impl Display for Login {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -47,9 +56,11 @@ impl Display for Login {
             f,
             "{}",
             html! {
-                <section class="login single-form">
-                    <h4>"Login Form"</h4>
-                    <form action="/user/login" method="POST">
+                <main>
+                    <header>
+                        <h1>"Login Form"</h1>
+                    </header>
+                    <form id="login" action="/user/login" method="POST">
                         <fieldset class="login-fields">
                             <legend>"User Credentials"</legend>
                             <a href="/user/signup">"Need an account?"</a>
@@ -61,19 +72,24 @@ impl Display for Login {
                                 <span>"Password:"</span>
                                 <input type="password" name="password" max=48 />
                             </label>
-                            <div class="error">"error"</div>
+                            <div class="error">{self.error.clone()}</div>
                             <button type="submit">"Login"</button>
                         </fieldset>
                     </form>
-                </section>
+                </main>
             }
         )
     }
 }
 
-
-pub fn login_form() -> String {
-    let body = Body(vec![Login]);
+pub fn login_form(error: Option<String>) -> String {
+    let body = Body(vec![
+        Box::new(Header),
+        Box::new(Login {
+            error: error.unwrap_or(String::from("")),
+        }),
+        Box::new(Footer),
+    ]);
     let html = Document {
         head: &Head,
         body: &body,
@@ -81,8 +97,14 @@ pub fn login_form() -> String {
     html.to_string()
 }
 
-pub fn signup_form() -> String {
-    let body = Body(vec![Signup]);
+pub fn signup_form<'a>(error: Option<String>) -> String {
+    let body: Body = Body(vec![
+        Box::new(Header),
+        Box::new(Signup {
+            error: error.unwrap_or(String::from("")),
+        }),
+        Box::new(Footer),
+    ]);
     let html = Document {
         head: &Head,
         body: &body,

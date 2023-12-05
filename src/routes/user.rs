@@ -1,7 +1,7 @@
 use crate::{
     models::{self, user::ExpandedUser},
     utils::now,
-    Context, NotAuthorized, NotFound, OldCookie, ResourceError,
+    Context, NotAuthorized, NotFound, OldCookie, ResourceError, ServerError,
 };
 use diesel::result::{DatabaseErrorKind, Error::DatabaseError};
 use warp::{
@@ -67,7 +67,7 @@ async fn insert_new_user(
     context: Context,
     new_user: models::user::NewUserApi,
 ) -> Result<(Context, models::user::User), warp::Rejection> {
-    tracing::info!("Saving User");
+    tracing::debug!("Saving User");
     let mut conn = context.db_conn.get_conn();
 
     let user = models::user::NewUser::new(new_user.into())
@@ -82,11 +82,13 @@ async fn insert_new_user(
                 }
                 err => {
                     tracing::error!("{:?}", err);
-                    warp::reject()
+                    reject::custom(ServerError {
+                        message: err.to_string(),
+                    })
                 }
             }
         })?;
-    tracing::info!("Saved User");
+    tracing::debug!("Saved User");
     Ok((context, user))
 }
 

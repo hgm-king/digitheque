@@ -1,16 +1,18 @@
 pub mod auth;
+pub mod common;
 pub mod error;
+pub mod user;
 
 use std::fmt::{self, Display};
 
 use html_to_string_macro::html;
 
-pub struct Document<'a, T: Display> {
+pub struct Document<'a> {
     pub head: &'a Head,
-    pub body: &'a Body<T>,
+    pub body: &'a Body,
 }
 
-impl<'a, T: Display> Display for Document<'a, T> {
+impl<'a> Display for Document<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -51,7 +53,7 @@ impl Display for Head {
                     <meta property="og:description" content="A social network allowing for people to explore the internet through a user-provided graph of websites." />
                     <meta property="og:type" content="website" />
                     <meta property="og:image" content="https://digitheque.io/seo/rainbow-logo1.png" />
-                    <link rel="stylesheet" href="/style.css" />
+                    <link rel="stylesheet" href="/styles/style.css" />
                     <link rel="stylesheet" href="/mobile.css" media="screen and (max-width: 600px)" />
                     <script src="https://unpkg.com/htmx.org@1.9.2" integrity="sha384-L6OqL9pRWyyFU3+/bjdSri+iIphTN/bvYyM37tICVyOJkWZLpP2vGn6VUEXgzg6h" crossorigin="anonymous"></script>
                     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
@@ -64,11 +66,15 @@ impl Display for Head {
     }
 }
 
-pub struct Body<T: Display>(pub Vec<T>);
+pub struct Body(pub Vec<Box<dyn Display>>);
 
-impl<T: Display> Display for Body<T> {
+impl Display for Body {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let html = self.0.iter().map(|item| format!("{}", item)).collect::<String>();
+        let html = self
+            .0
+            .iter()
+            .map(|item| format!("{}", item))
+            .collect::<String>();
         write!(
             f,
             "{}",
