@@ -1,0 +1,126 @@
+@font-face {
+    font-family: "AkzidenzGrotesk";
+    src: url("/fonts/ag-reg.woff2");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AkzidenzGrotesk";
+    src: url("/fonts/ag-bold.woff2");
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AkzidenzGrotesk";
+    src: url("/fonts/ag-md.woff2");
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AkzidenzGrotesk";
+    src: url("/fonts/ag-light.woff2");
+    font-weight: 100;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Tiempos";
+    src: url("/fonts/Tiempos-Regular.woff");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Tiempos";
+    src: url("/fonts/Tiempos-RegularItalic.woff");
+    font-style: italic;
+    font-display: swap;
+}
+
+body {
+    font-family: "AkzidenzGrotesk";
+    margin: 0;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1;
+    font-kerning: normal;
+}
+
+.body-spacing, main {
+    margin-left: 200px;
+    max-width: 900px;
+}
+
+header#banner {
+    background-color: #ff4f00;
+    color: white;
+    padding: 1rem 0rem;
+
+    & h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        margin: 0;
+        letter-spacing: -3.5px;
+        line-height: 1;
+    }
+
+    & h2 {
+        font-size: 1rem;
+        font-weight: 100;
+        line-height: 1;
+        margin: 0;
+    }
+
+    & #titles {
+        display: grid;
+        grid-template-rows: auto 1fr;
+    }
+
+    & #banner-wrapper {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        justify-content: space-between;
+        align-items: baseline;
+    }
+
+    & nav {
+        display: flex;
+        justify-content: space-around;
+
+        & a {
+            font-family: "AkzidenzGrotesk";
+            font-size: 1rem;
+            font-weight: 100;
+            letter-spacing: 0.1em;
+            text-transform: capitalize;
+            color: white;
+        }
+    }
+}
+
+main {
+    & h1 {
+        font-size: 2.5rem;
+        font-weight: 100;
+        margin-top: 2em;
+        margin-bottom: 1em;
+    }
+    
+    & h3 {
+        font-size: 1.4rem;
+        font-weight: 100;    
+        letter-spacing: 0.05em;
+        margin-top: 2em;
+        margin-bottom: 1em;
+        text-transform: uppercase;
+    }
+    
+    & p {
+        font-family: 'Tiempos';
+        font-size: 1.15rem;
+        line-height: 1.5;
+        max-width: 600px;
+        margin-top: 0;
+        margin-bottom: 1em;
+    }
+}
