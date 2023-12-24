@@ -11,8 +11,7 @@ use warp::{
 };
 
 use digitheque::{
-    assets_api, config::Config, db_conn::DbConn, handle_rejections, handlers, routes,
-    terminal_error_handler, user_api, Context,
+    assets_api, config::Config, db_conn::DbConn, handle_rejections, handlers, routes, user_api, Context,
 };
 
 #[tokio::main]
@@ -25,8 +24,13 @@ async fn main() -> Result<(), ()> {
 
     let end = assets_api!()
         .or(user_api!())
+        .or(
+            // surface logged in data to errors
+            routes::user::logged_in_rejection().and_then(handlers::user::profile)
+        )
         .map(|reply| reply::with_header(reply, "Access-Control-Allow-Origin", "*"))
-        .recover(terminal_error_handler);
+        .recover(handle_rejections)
+        .with(warp::trace::request());
 
     let app = make_service_fn(move |_| {
         let context = context.clone();

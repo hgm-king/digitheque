@@ -2,7 +2,10 @@ use html_to_string_macro::html;
 use std::fmt::{self, Display};
 
 use super::{Body, Document, Head};
-use crate::views::common::{Footer, Header};
+use crate::{
+    models::user::ExpandedUser,
+    views::common::{Footer, Header},
+};
 
 pub struct Profile;
 
@@ -20,8 +23,16 @@ impl<'a> Display for Profile {
     }
 }
 
-pub fn profile_page() -> String {
-    let body = Body(vec![Box::new(Header), Box::new(Profile), Box::new(Footer)]);
+pub fn profile_page(expanded_user: ExpandedUser) -> String {
+    let header = Header {
+        expanded_user: Some(expanded_user),
+    };
+    let mut body = Body(vec![]);
+
+    body.0.push(Box::new(header));
+    body.0.push(Box::new(Profile));
+    body.0.push(Box::new(Footer));
+
     let html = Document {
         head: &Head,
         body: &body,

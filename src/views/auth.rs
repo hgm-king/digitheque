@@ -18,22 +18,22 @@ impl Display for Signup {
             html! {
                 <main>
                     <header>
-                        <h1>"Signup Form"</h1>
+                        <h1>"Signup form"</h1>
                     </header>
                     <form id="signup" action="/user/signup" method="POST">
                         <fieldset class="signup-fields">
-                            <legend>"User Credentials"</legend>
+                            <legend>"User credentials"</legend>
                             <a href="/user/login">"Have an account?"</a>
                             <label>
-                                <span>"Username:"</span>
+                                <span>"Username"</span>
                                 <input type="text" name="username" required max=48 />
                             </label>
                             <label>
-                                <span>"Password:"</span>
+                                <span>"Password"</span>
                                 <input type="password" name="password" max=48 />
                             </label>
                             <label>
-                                <span>"Confirm Password:"</span>
+                                <span>"Confirm Password"</span>
                                 <input type="password" name="confirm_password" max=48 />
                             </label>
                             <div class="error">{self.error.clone()}</div>
@@ -58,18 +58,18 @@ impl Display for Login {
             html! {
                 <main>
                     <header>
-                        <h1>"Login Form"</h1>
+                        <h1>"Login form"</h1>
                     </header>
                     <form id="login" action="/user/login" method="POST">
                         <fieldset class="login-fields">
                             <legend>"User Credentials"</legend>
                             <a href="/user/signup">"Need an account?"</a>
                             <label>
-                                <span>"Username:"</span>
+                                <span>"Username"</span>
                                 <input type="text" name="username" required max=48 />
                             </label>
                             <label>
-                                <span>"Password:"</span>
+                                <span>"Password"</span>
                                 <input type="password" name="password" max=48 />
                             </label>
                             <div class="error">{self.error.clone()}</div>
@@ -84,7 +84,9 @@ impl Display for Login {
 
 pub fn login_form(error: Option<String>) -> String {
     let body = Body(vec![
-        Box::new(Header),
+        Box::new(Header {
+            expanded_user: None
+        }),
         Box::new(Login {
             error: error.unwrap_or(String::from("")),
         }),
@@ -99,7 +101,9 @@ pub fn login_form(error: Option<String>) -> String {
 
 pub fn signup_form<'a>(error: Option<String>) -> String {
     let body: Body = Body(vec![
-        Box::new(Header),
+        Box::new(Header {
+            expanded_user: None
+        }),
         Box::new(Signup {
             error: error.unwrap_or(String::from("")),
         }),

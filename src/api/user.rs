@@ -42,9 +42,8 @@ macro_rules! user_api {
                         // login form
                         routes::user::login_form()
                         .and_then(handlers::user::login_form)
-                    ),
+                    )
             )
-            .recover(handle_rejections)
             .with(warp::trace::named("user"))
     };
 }

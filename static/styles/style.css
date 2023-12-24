@@ -23,9 +23,9 @@
     src: url("/fonts/ag-light.woff2");
     font-weight: 100;
     font-display: swap;
-  }
+}
 
-  @font-face {
+@font-face {
     font-family: "Tiempos";
     src: url("/fonts/Tiempos-Regular.woff");
     font-display: swap;
@@ -46,7 +46,9 @@ body {
     font-kerning: normal;
 }
 
-.body-spacing, main {
+.body-spacing,
+main,
+footer {
     margin-left: 200px;
     max-width: 900px;
 }
@@ -71,29 +73,30 @@ header#banner {
         margin: 0;
     }
 
-    & #titles {
-        display: grid;
-        grid-template-rows: auto 1fr;
-    }
-
     & #banner-wrapper {
         display: grid;
-        grid-template-columns: 3fr 1fr;
+        grid-template-columns: 1fr 1fr;
         justify-content: space-between;
         align-items: baseline;
-    }
 
-    & nav {
-        display: flex;
-        justify-content: space-around;
+        & #titles {
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
 
-        & a {
-            font-family: "AkzidenzGrotesk";
-            font-size: 1rem;
-            font-weight: 100;
-            letter-spacing: 0.1em;
-            text-transform: capitalize;
-            color: white;
+        & nav {
+            display: flex;
+            justify-content: flex-end;
+
+            & a {
+                font-family: "AkzidenzGrotesk";
+                font-size: 1.1rem;
+                font-weight: 100;
+                letter-spacing: 0.1em;
+                text-transform: capitalize;
+                color: white;
+                margin-right: 1rem;
+            }
         }
     }
 }
@@ -105,16 +108,16 @@ main {
         margin-top: 2em;
         margin-bottom: 1em;
     }
-    
-    & h3 {
+
+    & h2 {
         font-size: 1.4rem;
-        font-weight: 100;    
+        font-weight: 100;
         letter-spacing: 0.05em;
         margin-top: 2em;
         margin-bottom: 1em;
         text-transform: uppercase;
     }
-    
+
     & p {
         font-family: 'Tiempos';
         font-size: 1.15rem;
@@ -123,4 +126,38 @@ main {
         margin-top: 0;
         margin-bottom: 1em;
     }
+}
+
+form {
+    & fieldset {
+        padding: 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+        border: 3px dotted black;
+
+        & legend {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 100;
+            letter-spacing: 0.05em;
+        }
+
+        & label {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+
+        & input {
+            max-width: 200px;
+        }
+
+        & button {
+            width: 100px;
+        }
+    }
+}
+
+#signup, #login {
+    width: 500px;
 }

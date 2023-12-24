@@ -1,14 +1,12 @@
-use crate::{models, views, Context, NotFound};
+use crate::{models, views, Context, NotFound, ResourceError};
 use std::convert::Infallible;
-use warp::{hyper::StatusCode, Rejection, Reply};
+use warp::{hyper::StatusCode, Rejection, Reply, reject::Reject};
 
 pub async fn profile(
     context: Context,
     expanded_user: models::user::ExpandedUser,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    // let pages = get_pages(context, &expanded_user)?;
-
-    let profile_html = views::user::profile_page();
+    let profile_html = views::user::profile_page(expanded_user);
 
     Ok(warp::reply::html(profile_html))
 }
@@ -17,12 +15,13 @@ pub async fn profile_with_cookie(
     context: Context,
     expanded_user: models::user::ExpandedUser,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    let profile_html = views::user::profile_page();
+    let cookie_value = format!("session={}; path=/", expanded_user.session.id);
+    let profile_html = views::user::profile_page(expanded_user);
 
     Ok(warp::reply::with_header(
         warp::reply::html(profile_html),
         "Set-Cookie",
-        format!("session={}; path=/", expanded_user.session.id),
+        cookie_value,
     ))
 }
 
@@ -65,8 +64,8 @@ pub async fn login_error(err: Rejection) -> Result<impl Reply, Rejection> {
 }
 
 pub async fn signup_error(err: Rejection) -> Result<impl Reply, Rejection> {
-    if let Some(NotFound) = err.find::<NotFound>() {
-        let html = views::auth::login_form(Some(String::from("Error: Invalid login credentials")));
+    if let Some(e) = err.find::<ResourceError>() {
+        let html = views::auth::login_form(Some(e.message.clone()));
         let html = warp::reply::html(html);
         Ok(warp::reply::with_status(html, StatusCode::NOT_FOUND))
     } else {

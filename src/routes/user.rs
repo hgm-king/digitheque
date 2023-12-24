@@ -1,7 +1,7 @@
 use crate::{
     models::{self, user::ExpandedUser},
     utils::now,
-    Context, NotAuthorized, NotFound, OldCookie, ResourceError, ServerError,
+    Context, ExpandedUserRejection, NotAuthorized, NotFound, OldCookie, ResourceError, ServerError,
 };
 use diesel::result::{DatabaseErrorKind, Error::DatabaseError};
 use warp::{
@@ -161,6 +161,33 @@ async fn with_user_from_cookie(
     Ok((context, expanded_user))
 }
 
+async fn reject_with_user(
+    context: Context,
+    session_id: i32,
+) -> Result<(Context, models::user::ExpandedUser), warp::Rejection> {
+    let mut conn = context.db_conn.get_conn();
+    tracing::error!("Adding user object into this rejection");
+    let expanded_user =
+        models::user::read_user_by_session(&mut conn, session_id).map_err(|_| {
+            warp::reject::custom(ExpandedUserRejection {
+                expanded_user: None,
+            })
+        })?;
+
+    tracing::error!("We have a logged in user");
+
+    Err(warp::reject::custom(ExpandedUserRejection {
+        expanded_user: Some(expanded_user),
+    }))
+}
+
+async fn reject_without_user(context: Context) -> Result<(), warp::Rejection> {
+    tracing::error!("Rejecting without user!");
+    Err(warp::reject::custom(ExpandedUserRejection {
+        expanded_user: None,
+    }))
+}
+
 async fn with_session_from_cookie(
     context: Context,
     session_id: i32,
@@ -178,6 +205,23 @@ pub fn authenticate_cookie() -> BoxedFilter<(Context, models::user::ExpandedUser
         .and(filters::ext::get::<Context>())
         .and(warp::cookie("session"))
         .and_then(with_user_from_cookie)
+        .untuple_one()
+        .boxed()
+}
+
+pub fn logged_in_rejection() -> BoxedFilter<(Context, models::user::ExpandedUser)> {
+    warp::any()
+        .and(filters::ext::get::<Context>())
+        .and(warp::cookie("session"))
+        .and_then(reject_with_user)
+        .untuple_one()
+        .boxed()
+}
+
+pub fn logged_out_rejection() -> BoxedFilter<()> {
+    warp::any()
+        .and(filters::ext::get::<Context>())
+        .and_then(reject_without_user)
         .untuple_one()
         .boxed()
 }

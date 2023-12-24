@@ -1,9 +1,13 @@
 use html_to_string_macro::html;
 use std::fmt::{self, Display};
 
+use crate::models::user::ExpandedUser;
+
 use super::{Body, Document, Head};
 
-pub struct Header;
+pub struct Header {
+    pub expanded_user: Option<ExpandedUser>,
+}
 
 impl Display for Header {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -18,9 +22,18 @@ impl Display for Header {
                             <h2 id="website-subtitle">"Markdown zines for everyone"</h2>
                         </div>
                         <nav>
-                            <a href="/rss">"RSS"</a>
+                            {
+                                match &self.expanded_user {
+                                    None => html! {
+                                        <a href="/user/login">"Login"</a>
+                                    },
+                                    Some(user) => html! {
+                                        <a href="">{&user.user.username}</a>
+                                        <a href="/user/logout">"Logout"</a>
+                                    }
+                                }
+                            }
                             <a href="/about">"About"</a>
-                            <a href="/contact">"Contact"</a>
                         </nav>
                     </div>
                 </header>
@@ -62,7 +75,13 @@ impl Display for Landing {
 }
 
 pub fn landing_page() -> String {
-    let body = Body(vec![Box::new(Header), Box::new(Landing), Box::new(Footer)]);
+    let body = Body(vec![
+        Box::new(Header {
+            expanded_user: None,
+        }),
+        Box::new(Landing),
+        Box::new(Footer),
+    ]);
     let html = Document {
         head: &Head,
         body: &body,
