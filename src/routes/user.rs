@@ -1,5 +1,6 @@
 use crate::{
     models::{self, user::ExpandedUser},
+    routes,
     utils::now,
     Context, ExpandedUserRejection, NotAuthorized, NotFound, OldCookie, ResourceError, ServerError,
 };
@@ -19,7 +20,7 @@ pub fn logout() -> BoxedFilter<()> {
         .boxed()
 }
 
-pub fn signup() -> BoxedFilter<(Context, models::user::ExpandedUser)> {
+pub fn signup() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
     warp::path("signup")
         .and(warp::path::end())
         .and(warp::post())
@@ -29,10 +30,12 @@ pub fn signup() -> BoxedFilter<(Context, models::user::ExpandedUser)> {
         .untuple_one()
         .and_then(with_new_session)
         .untuple_one()
+        .and_then(routes::workspace::insert_root_workspace)
+        .untuple_one()
         .boxed()
 }
 
-pub fn login() -> BoxedFilter<(Context, models::user::ExpandedUser)> {
+pub fn login() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
     warp::path("login")
         .and(warp::path::end())
         .and(warp::post())
@@ -42,13 +45,17 @@ pub fn login() -> BoxedFilter<(Context, models::user::ExpandedUser)> {
         .untuple_one()
         .and_then(with_new_session)
         .untuple_one()
+        .and_then(routes::workspace::with_root_workspace)
+        .untuple_one()
         .boxed()
 }
 
-pub fn get_by_cookie() -> BoxedFilter<(Context, models::user::ExpandedUser)> {
+pub fn get_by_cookie() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
     warp::path::end()
         .and(warp::get())
         .and(authenticate_cookie())
+        .and_then(routes::workspace::with_root_workspace)
+        .untuple_one()
         .boxed()
 }
 
@@ -181,7 +188,7 @@ async fn reject_with_user(
     }))
 }
 
-async fn reject_without_user(context: Context) -> Result<(), warp::Rejection> {
+async fn reject_without_user(_context: Context) -> Result<(), warp::Rejection> {
     tracing::error!("Rejecting without user!");
     Err(warp::reject::custom(ExpandedUserRejection {
         expanded_user: None,
@@ -209,11 +216,13 @@ pub fn authenticate_cookie() -> BoxedFilter<(Context, models::user::ExpandedUser
         .boxed()
 }
 
-pub fn logged_in_rejection() -> BoxedFilter<(Context, models::user::ExpandedUser)> {
+pub fn logged_in_rejection() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
     warp::any()
         .and(filters::ext::get::<Context>())
         .and(warp::cookie("session"))
         .and_then(reject_with_user)
+        .untuple_one()
+        .and_then(routes::workspace::with_root_workspace)
         .untuple_one()
         .boxed()
 }
@@ -234,3 +243,5 @@ pub fn read_cookie() -> BoxedFilter<(Context, models::session::Session)> {
         .untuple_one()
         .boxed()
 }
+
+

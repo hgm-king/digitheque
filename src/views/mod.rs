@@ -2,6 +2,7 @@ pub mod auth;
 pub mod common;
 pub mod error;
 pub mod user;
+pub mod workspace;
 
 use std::fmt::{self, Display};
 

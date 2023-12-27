@@ -28,6 +28,8 @@ macro_rules! user_api {
                         // redirect signup page to profile if signed in
                         routes::user::signup_form()
                         .and(routes::user::authenticate_cookie())
+                        .and_then(routes::workspace::with_root_workspace)
+                        .untuple_one()
                         .and_then(handlers::user::profile))
                     .or(
                         // signup form
@@ -37,6 +39,8 @@ macro_rules! user_api {
                         // redirect login page to profile if signed in
                         routes::user::login_form()
                         .and(routes::user::authenticate_cookie())
+                        .and_then(routes::workspace::with_root_workspace)
+                        .untuple_one()
                         .and_then(handlers::user::profile))
                     .or(
                         // login form

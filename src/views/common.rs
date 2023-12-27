@@ -28,7 +28,7 @@ impl Display for Header {
                                         <a href="/user/login">"Login"</a>
                                     },
                                     Some(user) => html! {
-                                        <a href="">{&user.user.username}</a>
+                                        <a href="/user">{&user.user.username}</a>
                                         <a href="/user/logout">"Logout"</a>
                                     }
                                 }

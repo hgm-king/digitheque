@@ -1,22 +1,24 @@
 use crate::{models, views, Context, NotFound, ResourceError};
 use std::convert::Infallible;
-use warp::{hyper::StatusCode, Rejection, Reply, reject::Reject};
+use warp::{hyper::StatusCode, Rejection, Reply};
 
 pub async fn profile(
-    context: Context,
+    _context: Context,
     expanded_user: models::user::ExpandedUser,
+    workspace: models::workspace::WorkspaceWithChildren,
 ) -> Result<impl warp::Reply, warp::Rejection> {
-    let profile_html = views::user::profile_page(expanded_user);
+    let profile_html = views::user::profile_page(expanded_user, workspace);
 
     Ok(warp::reply::html(profile_html))
 }
 
 pub async fn profile_with_cookie(
-    context: Context,
+    _context: Context,
     expanded_user: models::user::ExpandedUser,
+    workspace: models::workspace::WorkspaceWithChildren,
 ) -> Result<impl warp::Reply, warp::Rejection> {
     let cookie_value = format!("session={}; path=/", expanded_user.session.id);
-    let profile_html = views::user::profile_page(expanded_user);
+    let profile_html = views::user::profile_page(expanded_user, workspace);
 
     Ok(warp::reply::with_header(
         warp::reply::html(profile_html),
@@ -25,10 +27,10 @@ pub async fn profile_with_cookie(
     ))
 }
 
-// pub fn get_pages(
+// pub fn get_workspaces(
 //     context: Context,
 //     expanded_user: &models::user::ExpandedUser,
-// ) -> Result<Vec<models::page::Page>, warp::Rejection> {
+// ) -> Result<Vec<models::workspace::Workspace>, warp::Rejection> {
 //     let mut conn = context.db_conn.get_conn();
 
 //     models::page::read_pages_by_user_id(&mut conn, expanded_user.user.id).map_err(|e| {

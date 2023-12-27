@@ -11,7 +11,7 @@ pub mod views;
 #[macro_use]
 extern crate diesel;
 
-use std::{convert::Infallible, sync::Arc};
+use std::sync::Arc;
 use models::user::ExpandedUser;
 use warp::{hyper::StatusCode, reject, Rejection, Reply};
 

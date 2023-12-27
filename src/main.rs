@@ -9,14 +9,27 @@ use warp::{
     hyper::{service::make_service_fn, Server},
     reply, Filter,
 };
+use tracing_subscriber::fmt::format::FmtSpan;
 
 use digitheque::{
-    assets_api, config::Config, db_conn::DbConn, handle_rejections, handlers, routes, user_api, Context,
+    assets_api, workspace_api, config::Config, db_conn::DbConn, handle_rejections, handlers, routes, user_api, Context,
 };
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-    tracing_subscriber::fmt::init();
+    let filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "tracing=info,warp=trace".to_owned());
+
+    // Configure the default `tracing` subscriber.
+    // The `fmt` subscriber from the `tracing-subscriber` crate logs `tracing`
+    // events to stdout. Other subscribers are available for integrating with
+    // distributed tracing systems such as OpenTelemetry.
+    tracing_subscriber::fmt()
+        // Use the filter we built above to determine which traces to record.
+        .with_env_filter(filter)
+        // Record an event when each span closes. This can be used to time our
+        // routes' durations!
+        .with_span_events(FmtSpan::CLOSE)
+        .init();
 
     let config = Arc::new(Config::new(false));
     let db_conn = Arc::new(DbConn::new(&config.db_path));
@@ -24,6 +37,7 @@ async fn main() -> Result<(), ()> {
 
     let end = assets_api!()
         .or(user_api!())
+        .or(workspace_api!())
         .or(
             // surface logged in data to errors
             routes::user::logged_in_rejection().and_then(handlers::user::profile)
