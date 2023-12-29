@@ -31,9 +31,6 @@ table! {
         created_at -> Timestamp,
         updated_at -> Nullable<Timestamp>,
         deleted_at -> Nullable<Timestamp>,
-        todo_state -> Nullable<Bool>,
-        link_url -> Nullable<Varchar>,
-        img_url -> Nullable<Varchar>,
         content -> Nullable<Text>,
     }
 }

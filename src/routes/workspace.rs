@@ -16,6 +16,22 @@ pub fn workspace() -> BoxedFilter<(
         .boxed()
 }
 
+pub fn workspace_edit() -> BoxedFilter<(
+    Context,
+    models::user::ExpandedUser,
+    models::workspace::WorkspaceWithChildren,
+)> {
+    warp::path("workspace")
+        .and(warp::path::param::<i32>())
+        .and(warp::path("edit"))
+        .and(warp::path::end())
+        .and(warp::get())
+        .and(routes::user::authenticate_cookie())
+        .and_then(with_workspace)
+        .untuple_one()
+        .boxed()
+}
+
 pub fn create_workspace() -> BoxedFilter<(
     Context,
     models::user::ExpandedUser,
@@ -28,6 +44,25 @@ pub fn create_workspace() -> BoxedFilter<(
         .and(routes::user::authenticate_cookie())
         .and(warp::body::form::<models::workspace::NewWorkspaceApi>())
         .and_then(with_new_workspace)
+        .untuple_one()
+        .and_then(with_workspace)
+        .untuple_one()
+        .boxed()
+}
+
+pub fn edit_workspace() -> BoxedFilter<(
+    Context,
+    models::user::ExpandedUser,
+    models::workspace::WorkspaceWithChildren,
+)> {
+    warp::path("workspace")
+        .and(warp::path::param::<i32>())
+        .and(warp::path("edit"))
+        .and(warp::path::end())
+        .and(warp::post())
+        .and(routes::user::authenticate_cookie())
+        .and(warp::body::form::<models::workspace::EditWorkspaceApi>())
+        .and_then(with_update_workspace)
         .untuple_one()
         .and_then(with_workspace)
         .untuple_one()
@@ -56,6 +91,32 @@ pub async fn with_root_workspace(
         })?;
 
     Ok((context, expanded_user, workspace.unwrap()))
+}
+
+async fn with_update_workspace(
+    id: i32,
+    context: Context,
+    expanded_user: models::user::ExpandedUser,
+    edit_workspace: models::workspace::EditWorkspaceApi,
+) -> Result<
+    (
+        i32,
+        Context,
+        models::user::ExpandedUser,
+    ),
+    warp::Rejection,
+> {
+    let mut conn = context.db_conn.get_conn();
+
+    models::workspace::update(&mut conn, id, edit_workspace)
+        .map_err(|e| {
+            tracing::error!("{:?}", e);
+            reject::custom(ServerError {
+                message: e.to_string(),
+            })
+        })?;
+
+    Ok((id, context, expanded_user))
 }
 
 async fn with_workspace(

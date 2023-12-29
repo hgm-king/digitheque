@@ -37,9 +37,6 @@ CREATE TABLE "workspace" (
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    todo_state BOOLEAN,
-    link_url VARCHAR(2048),
-    img_url VARCHAR(2048),
     content TEXT,
     CONSTRAINT fk_user
       FOREIGN KEY(user_id) 

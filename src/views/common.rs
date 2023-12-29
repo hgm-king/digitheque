@@ -19,7 +19,7 @@ impl Display for Header {
                     <div id="banner-wrapper" class="body-spacing">
                         <div id="titles">
                             <h1 id="website-title">"Digitheque"</h1>
-                            <h2 id="website-subtitle">"Markdown zines for everyone"</h2>
+                            <h2 id="website-subtitle">"Markdown workspaces for everyone"</h2>
                         </div>
                         <nav>
                             {

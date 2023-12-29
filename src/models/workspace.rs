@@ -9,20 +9,14 @@ use serde::Deserialize;
 
 pub enum WorkspaceType {
     Root = 1,
-    Notepad = 2,
-    Todo = 3,
-    Link = 4,
-    Image = 5,
+    Markdown = 2,
 }
 
 impl WorkspaceType {
     pub fn from_i32(value: i32) -> WorkspaceType {
         match value {
             1 => WorkspaceType::Root,
-            2 => WorkspaceType::Notepad,
-            3 => WorkspaceType::Todo,
-            4 => WorkspaceType::Link,
-            5 => WorkspaceType::Image,
+            2 => WorkspaceType::Markdown,
             _ => panic!("Unknown value: {}", value),
         }
     }
@@ -41,9 +35,6 @@ pub struct Workspace {
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
-    pub todo_state: Option<bool>,
-    pub link_url: Option<String>,
-    pub img_url: Option<String>,
     pub content: Option<String>,
 }
 
@@ -62,9 +53,6 @@ pub struct JoinedWorkspace {
     pub parent_created_at: NaiveDateTime,
     pub parent_updated_at: Option<NaiveDateTime>,
     pub parent_deleted_at: Option<NaiveDateTime>,
-    pub parent_todo_state: Option<bool>,
-    pub parent_link_url: Option<String>,
-    pub parent_img_url: Option<String>,
     pub parent_content: Option<String>,
 
     pub id: i32,
@@ -76,9 +64,6 @@ pub struct JoinedWorkspace {
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
-    pub todo_state: Option<bool>,
-    pub link_url: Option<String>,
-    pub img_url: Option<String>,
     pub content: Option<String>,
 }
 
@@ -87,11 +72,24 @@ pub struct NewWorkspaceApi {
     pub name: String,
     pub description: String,
     pub type_id: i32,
-    // pub styles: Option<String>,
-    // pub todo_state: Option<bool>,
-    // pub link_url: Option<String>,
-    // pub img_url: Option<String>,
     // pub content: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub struct EditWorkspaceApi {
+    pub name: String,
+    pub description: String,
+    pub content: Option<String>,
+}
+
+#[derive(AsChangeset)]
+#[diesel(table_name = workspace)]
+pub struct EditWorkspace {
+    pub id: i32,
+    pub name: String,
+    pub description: String,
+    pub content: Option<String>,
+    pub updated_at: Option<NaiveDateTime>,
 }
 
 #[derive(Insertable)]
@@ -105,9 +103,6 @@ pub struct NewWorkspace {
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
-    pub todo_state: Option<bool>,
-    pub link_url: Option<String>,
-    pub img_url: Option<String>,
     pub content: Option<String>,
 }
 
@@ -122,9 +117,6 @@ impl NewWorkspace {
             description: new_workspace.description,
             type_id: new_workspace.type_id,
             content: None,
-            link_url: None,
-            img_url: None,
-            todo_state: None,
             styles: None,
         }
     }
@@ -213,11 +205,8 @@ pub fn read_root_by_user(
                 .eq(workspace_element::child_id)),
         )
         .filter(parent.field(workspace::deleted_at).is_null())
-        .filter(children.field(workspace::deleted_at).is_null())
-        .filter(parent.field(workspace::type_id).eq(1))
         .filter(parent.field(workspace::user_id).eq(user_id))
-        .filter(children.field(workspace::user_id).eq(user_id))
-        .or_filter(children.field(workspace::user_id).is_null())
+        .filter(parent.field(workspace::type_id).eq(1))
         .load::<(
             Workspace,
             Option<models::workspace_element::WorkspaceElement>,
@@ -250,9 +239,17 @@ pub fn delete(conn: &mut PgConnection, workspace: &Workspace) -> QueryResult<usi
         .execute(conn)
 }
 
-pub fn update(conn: &mut PgConnection, workspace: Workspace) -> QueryResult<usize> {
+pub fn update(conn: &mut PgConnection, id: i32, workspace: EditWorkspaceApi) -> QueryResult<usize> {
+    let edit_workspace = EditWorkspace {
+        id,
+        updated_at: Some(now()),
+        name: workspace.name,
+        description: workspace.description,
+        content: workspace.content
+    };
+
     diesel::update(workspace::table)
-        .set(workspace)
+        .set(edit_workspace)
         // .set((workspace::updated_at.eq(Some(now())),))
         .execute(conn)
 }
