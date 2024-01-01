@@ -17,12 +17,15 @@ impl Display for Workspace {
             f,
             "{}",
             html! {
-                <main>
-                    <h1>{self.workspace.workspace.name.clone()}</h1>
-                    <p>{self.workspace.workspace.description.clone()}</p>
-                    <a href={format!("/workspace/{}/edit", self.workspace.workspace.id)}>"Edit me!"</a>
-                    {handle_workspace_type(&self.workspace.workspace)}
-                    <p>"We have "{self.workspace.children.len()}" children"</p>
+                <main class="split">
+                    <section class="">
+                        <h1 class="workspace-name">{self.workspace.workspace.name.clone()}</h1>
+                        <h2 class="workspace-description">{self.workspace.workspace.description.clone()}</h2>
+                        <a href={format!("/workspace/{}/edit", self.workspace.workspace.id)}>"Edit me!"</a>
+                        <div class="markdown">
+                            {handle_workspace_type(&self.workspace.workspace)}
+                        </div>
+                    </section>
                     {WorkspaceChildren(self.workspace.children.clone())}
                     <h3>"Add new"</h3>
                     <form action={format!("/workspace/{}", self.workspace.workspace.id)} method="POST">
@@ -50,8 +53,11 @@ impl Display for WorkspaceChildren {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let childs = self.0.iter().map(|workspace| {
             html! {
-                <h2><a href={format!("/workspace/{}", workspace.id)}>{workspace.name.clone()}</a></h2>
-                {handle_workspace_type(workspace)}
+                <article>
+                    <h4>
+                        <a href={format!("/workspace/{}", workspace.id)}>{workspace.name.clone()}</a>
+                    </h4>
+                </article>
             }
         }).collect::<String>();
 
@@ -59,9 +65,7 @@ impl Display for WorkspaceChildren {
             f,
             "{}",
             html! {
-                <section>
-                    {childs}
-                </section>
+                {childs}
             }
         )
     }
@@ -78,10 +82,12 @@ impl Display for WorkspaceEdit {
             "{}",
             html! {
                 <main>
-                    <h1>{self.workspace.workspace.name.clone()}</h1>
-                    <p>{self.workspace.workspace.description.clone()}</p>
-                    <h3>"Edit"</h3>
-                    {handle_workspace_edit(&self.workspace.workspace)}
+                    <section>
+                        <h1 class="workspace-name">{self.workspace.workspace.name.clone()}</h1>
+                        <h2 class="workspace-description">{self.workspace.workspace.description.clone()}</h2>
+                        <h3>"Edit"</h3>
+                        {handle_workspace_edit(&self.workspace.workspace)}
+                    </section>
                 </main>
             }
         )
@@ -90,10 +96,16 @@ impl Display for WorkspaceEdit {
 
 fn handle_workspace_type(workspace: &models::workspace::Workspace) -> String {
     match models::workspace::WorkspaceType::from_i32(workspace.type_id) {
-        models::workspace::WorkspaceType::Markdown => match bebop_lang::markdown::markdown_to_html(&workspace.content.clone().unwrap_or(String::from(""))) {
-            Ok(s) => s,
-            Err(s) => s
-        },
+        models::workspace::WorkspaceType::Markdown => {
+            let input = workspace.content.clone().unwrap_or(String::from(""));
+            println!("{:?}", input);
+            let md = bebop_lang::markdown::parser::parse_markdown(&input).unwrap_or(("", vec![]));
+            println!("{:?}", md);
+            md.1
+                .into_iter()
+                .map(bebop_lang::markdown::html::markdown_to_html)
+                .collect()
+            },
         models::workspace::WorkspaceType::Root => html! {
             <span>"How did this get here??"</span>
         },

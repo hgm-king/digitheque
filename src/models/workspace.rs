@@ -85,7 +85,6 @@ pub struct EditWorkspaceApi {
 #[derive(AsChangeset)]
 #[diesel(table_name = workspace)]
 pub struct EditWorkspace {
-    pub id: i32,
     pub name: String,
     pub description: String,
     pub content: Option<String>,
@@ -241,7 +240,6 @@ pub fn delete(conn: &mut PgConnection, workspace: &Workspace) -> QueryResult<usi
 
 pub fn update(conn: &mut PgConnection, id: i32, workspace: EditWorkspaceApi) -> QueryResult<usize> {
     let edit_workspace = EditWorkspace {
-        id,
         updated_at: Some(now()),
         name: workspace.name,
         description: workspace.description,
@@ -250,6 +248,7 @@ pub fn update(conn: &mut PgConnection, id: i32, workspace: EditWorkspaceApi) -> 
 
     diesel::update(workspace::table)
         .set(edit_workspace)
+        .filter(workspace::id.eq(id))
         // .set((workspace::updated_at.eq(Some(now())),))
         .execute(conn)
 }
