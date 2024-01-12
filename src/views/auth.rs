@@ -17,9 +17,7 @@ impl Display for Signup {
             "{}",
             html! {
                 <main>
-                    <header>
-                        <h1>"Signup form"</h1>
-                    </header>
+                    <h1>"Signup form"</h1>
                     <form id="signup" action="/user/signup" method="POST">
                         <fieldset class="signup-fields">
                             <legend>"User credentials"</legend>
@@ -57,9 +55,7 @@ impl Display for Login {
             "{}",
             html! {
                 <main>
-                    <header>
-                        <h1>"Login form"</h1>
-                    </header>
+                    <h1>"Login form"</h1>
                     <form id="login" action="/user/login" method="POST">
                         <fieldset class="login-fields">
                             <legend>"User Credentials"</legend>

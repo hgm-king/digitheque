@@ -41,6 +41,7 @@ impl Display for Head {
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <meta charset="utf-8" />
                     <title>"Digitheque"</title>
+                    <link rel="stylesheet" href="/styles/fonts.css" />
                     <link rel="stylesheet" href="/styles/style.css" />
                 </head>
             }

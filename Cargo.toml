@@ -8,7 +8,7 @@ license = "MIT/Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bebop-lang = "0.1.6"
+bebop-lang = "0.1.11"
 chrono = {version = "0.4.31", features = ["serde"]}
 diesel = { version = "2.1.4", features = ["postgres", "r2d2", "chrono"] }
 dotenvy = "0.15.7"
