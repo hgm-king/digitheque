@@ -16,26 +16,23 @@ impl Display for Header {
             "{}",
             html! {
                 <header id="banner">
-                    <div id="banner-wrapper" class="body-spacing">
-                        <div id="titles">
-                            <h1 id="website-title">"Digitheque"</h1>
-                            <h2 id="website-subtitle">"Markdown workspaces for everyone"</h2>
-                        </div>
-                        <nav>
+                    <span id="logo"><a href="/" title="Digitheque.io">"Digitheque"</a></span>
+                    <nav>
+                        <ul>
                             {
                                 match &self.expanded_user {
                                     None => html! {
-                                        <a href="/user/login">"Login"</a>
+                                        <li><a href="/user/login">"Login"</a></li>
                                     },
                                     Some(user) => html! {
-                                        <a href="/user">{&user.user.username}</a>
-                                        <a href="/user/logout">"Logout"</a>
+                                        <li><a href="/user">{&user.user.username}</a></li>
+                                        <li><a href="/user/logout">"Logout"</a></li>
                                     }
                                 }
                             }
-                            <a href="/about">"About"</a>
-                        </nav>
-                    </div>
+                            <li><a href="/about">"About"</a></li>
+                        </ul>
+                    </nav>
                 </header>
             }
         )

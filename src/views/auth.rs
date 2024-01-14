@@ -21,19 +21,27 @@ impl Display for Signup {
                     <form id="signup" action="/user/signup" method="POST">
                         <fieldset class="signup-fields">
                             <legend>"User credentials"</legend>
-                            <a href="/user/login">"Have an account?"</a>
-                            <label>
-                                <span>"Username"</span>
-                                <input type="text" name="username" required max=48 />
-                            </label>
-                            <label>
-                                <span>"Password"</span>
-                                <input type="password" name="password" max=48 />
-                            </label>
-                            <label>
-                                <span>"Confirm Password"</span>
-                                <input type="password" name="confirm_password" max=48 />
-                            </label>
+                            <div>
+                                <a href="/user/login">"Have an account?"</a>
+                            </div>
+                            <div>
+                                <label>
+                                    <span>"Username"</span>
+                                    <input type="text" name="username" required max=48 />
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <span>"Password"</span>
+                                    <input type="password" name="password" max=48 />
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <span>"Confirm Password"</span>
+                                    <input type="password" name="confirm_password" max=48 />
+                                </label>
+                            </div>
                             <div class="error">{self.error.clone()}</div>
                             <button type="submit">"Signup"</button>
                         </fieldset>
@@ -58,16 +66,22 @@ impl Display for Login {
                     <h1>"Login form"</h1>
                     <form id="login" action="/user/login" method="POST">
                         <fieldset class="login-fields">
-                            <legend>"User Credentials"</legend>
-                            <a href="/user/signup">"Need an account?"</a>
-                            <label>
-                                <span>"Username"</span>
-                                <input type="text" name="username" required max=48 />
-                            </label>
-                            <label>
-                                <span>"Password"</span>
-                                <input type="password" name="password" max=48 />
-                            </label>
+                            <legend>"User credentials"</legend>
+                            <div>
+                                <a href="/user/signup">"Need an account?"</a>
+                            </div>
+                            <div>
+                                <label>
+                                    <span>"Username"</span>
+                                    <input type="text" name="username" required max=48 />
+                                </label>
+                            </div>
+                            <div>
+                                <label>
+                                    <span>"Password"</span>
+                                    <input type="password" name="password" max=48 />
+                                </label>
+                            </div>
                             <div class="error">{self.error.clone()}</div>
                             <button type="submit">"Login"</button>
                         </fieldset>
