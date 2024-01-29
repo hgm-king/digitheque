@@ -96,7 +96,7 @@ impl Display for WorkspaceEdit {
 
 fn handle_workspace_type(workspace: &models::workspace::Workspace) -> String {
     match models::workspace::WorkspaceType::from_i32(workspace.type_id) {
-        models::workspace::WorkspaceType::Markdown => {
+        _ => {
             let input = workspace.content.clone().unwrap_or(String::from(""));
             println!("{:?}", input);
             let md = bebop_lang::markdown::parser::parse_markdown(&input).unwrap_or(("", vec![]));
@@ -108,63 +108,88 @@ fn handle_workspace_type(workspace: &models::workspace::Workspace) -> String {
                 .collect();
             
 
-            let input = &format!("concat
+            let input = &format!(r#"concat
 
             (def [fun]
-                (\\ [args body] 
+                (\ [args body] 
                     [def (list (head args)) 
-                    (\\ (tail args) body)]))
+                    (\ (tail args) body)]))
             
             (fun [h1 children]
-                [concat \"<h1>\" children \"</h1>\"])
+                [concat "<h1>" children "</h1>"])
             
             (fun [h2 children]
-                [concat \"<h2>\" children \"</h2>\"])
+                [concat "<h2>" children "</h2>"])
             
             (fun [h3 children]
-                [concat \"<h3>\" children \"</h3>\"])
+                [concat "<h3>" children "</h3>"])
             
             (fun [h4 children]
-                [concat \"<h4>\" children \"</h4>\"])
+                [concat "<h4>" children "</h4>"])
             
             (fun [h5 children]
-                [concat \"<h5>\" children \"</h5>\"])
+                [concat "<h5>" children "</h5>"])
             
             (fun [h6 children]
-                [concat \"<h6>\" children \"</h6>\"])
+                [concat "<h6>" children "</h6>"])
+
+            (fun [blockquote children]
+                [concat "<blockquote>" children "</blockquote>"])
             
             (fun [code children]
-                [concat \"<code>\" children \"</code>\"])
+                [concat "<code>" children "</code>"])
             
             (fun [pre children]
-                [concat \"<pre>\" children \"</pre>\"])
+                [concat "<pre>" children "</pre>"])
             
             (fun [p children]
-                [concat \"<p>\" children \"</p>\"])
+                [concat "<p>" children "</p>"])
             
-            (fun [i children]
-                [concat \"<i>\" children \"</i>\"]) 
+            (fun [em children]
+                [concat "<em>" children "</em>"]) 
+
+            (fun [strike children]
+                [concat "<s>" children "</s>"]) 
             
-            (fun [b children]
-                [concat \"<b>\" children \"</b>\"])
+            (fun [strong children]
+                [concat "<strong>" children "</strong>"])
             
             (fun [li children]
-                [concat \"<li>\" children \"</li>\"])
+                [concat "<li>" children "</li>"])
             
             (fun [ul children]
-                [concat \"<ul>\" children \"</ul>\"])
+                [concat "<ul>" children "</ul>"])
+            
+            (fun [tasks children]
+                [concat "<ul class='tasks'>" children "</ul>"])
             
             (fun [ol children]
-                [concat \"<ol>\" children \"</ol>\"])
+                [concat "<ol>" children "</ol>"])
             
+            (def [checked] "<input type='checkbox' checked />")
+
+            (def [unchecked] "<input type='checkbox' />")
+
+            (fun [ol children]
+                [concat "<ol>" children "</ol>"])
+
             (fun [img src alt]
-                [concat \"<img src='\" src \"' alt='\" alt \"' />\"])
+                [concat "<img src='" src "' alt='" alt "' />"])
                 
             (fun [a href children]
-                [concat \"<a href='\" href \"'>\" children \"</a>\"])
+                [concat "<a href='" href "'>" children "</a>"])
+
+            (fun [a-out href children]
+                [concat "<a target='_blank' href='" href "'>" children "</a>"])
             
             (def [hr]
-                \"<hr/>\")
+                "<hr/>")
+            
+            (def [empty]
+                "<div></div>")
+
+            (fun [color children]
+                [concat "<span style='color: " children ";'>◼</span>" children])
             
             (def [true]
                 1)
@@ -186,9 +211,9 @@ fn handle_workspace_type(workspace: &models::workspace::Workspace) -> String {
             (fun [dec n] [- n 1])
             
             (def [fun] 
-                (\\ [args body] 
+                (\ [args body] 
                     [def (list (head args)) 
-                    (\\ (tail args) body)]))
+                    (\ (tail args) body)]))
             
             (fun [cons x xs]
                 [join
@@ -197,13 +222,13 @@ fn handle_workspace_type(workspace: &models::workspace::Workspace) -> String {
                         [list x])
                     xs])
             
-            (fun [empty l] 
+            (fun [is-empty l] 
                 [if (== l []) 
                     [true] 
                     [false]])
             
             (fun [len l] 
-                [if (empty l) 
+                [if (is-empty l) 
                     [0] 
                     [+ 1 (len (tail l))]])
             
@@ -211,32 +236,36 @@ fn handle_workspace_type(workspace: &models::workspace::Workspace) -> String {
                 [if (== 0 target)
                     [base]
                     [step (dec target)
-                        (\\ [] [rec (dec target) base step])]])
+                        (\ [] [rec (dec target) base step])]])
             
             (fun [rec-list target base step]
                 [if (== 0 (len target))
                     [base]
                     [step 
                         (head target)
-                        (\\ [] [rec-list (tail target) base step])]])
+                        (\ [] [rec-list (tail target) base step])]])
             
             (fun [map target mapper]
-                [rec-list target [] (\\ [e es] [cons (mapper e) (es)])])
+                [rec-list target [] (\ [e es] [cons (mapper e) (es)])])
             
             (fun [filter target filterer]
-                [rec-list target [] (\\ [e es] [if (filterer e) [cons e (es)] [(es)]])])
+                [rec-list target [] (\ [e es] [if (filterer e) [cons e (es)] [(es)]])])
 
+            (fun [nth n l]
+                [head (rec n
+                    l
+                    (\ [n-1 nthn-1] [tail (nthn-1)]))])
+
+            (fun [append n] [eval (cons concat n)])
+            
             {}
-            ", lisp);
+            "#, lisp);
             
             println!("{}", input);
 
             let v = bebop_lang::lisp::lisp(&mut env, input);
             v
         }
-        models::workspace::WorkspaceType::Root => html! {
-            <span>"How did this get here??"</span>
-        },
     }
 }
 
@@ -246,11 +275,8 @@ fn handle_workspace_edit(workspace: &models::workspace::Workspace) -> String {
             <input type="hidden" name="name" value={workspace.name.clone()} />
             <input type="hidden" name="description" value={workspace.description.clone()} />
             {match models::workspace::WorkspaceType::from_i32(workspace.type_id) {
-                models::workspace::WorkspaceType::Markdown => html! {
-                    <textarea name="content">{workspace.content.clone().unwrap_or(String::from("Missing data!"))}</textarea>
-                },
-                models::workspace::WorkspaceType::Root => html! {
-                    <span>"How did this get here??"</span>
+                _ => html! {
+                    <textarea name="content">{workspace.content.clone().unwrap_or(String::from("# Edit me to get started!\nMake sure to save using the button at the bottom.\n"))}</textarea>
                 },
             }}
             <button type="submit">"Submit"</button>

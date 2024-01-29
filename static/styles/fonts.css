@@ -315,139 +315,48 @@
 
 @font-face {
     font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/ultra.woff2");
+    src: url("/fonts/FranklinGothic/heavy.ttf");
     font-weight: 900;
     font-display: swap;
 }
 
 @font-face {
     font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/black.woff2");
-    font-weight: 800;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/heavy.woff2");
+    src: url("/fonts/FranklinGothic/bold.ttf");
     font-weight: 700;
     font-display: swap;
 }
 
 @font-face {
     font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/bold.woff2");
-    font-weight: 600;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/medium.woff2");
-    font-weight: 500;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/regular.woff2");
-    font-weight: 400;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/light.woff2");
-    font-weight: 300;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/extra-light.woff2");
-    font-weight: 200;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/thin.woff2");
-    font-weight: 100;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/ultra-italic.woff2");
-    font-style: italic;
+    src: url("/fonts/FranklinGothic/heavy-italic.ttf");
     font-weight: 900;
+    font-style: italic;
     font-display: swap;
 }
 
 @font-face {
     font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/black-italic.woff2");
-    font-style: italic;
-    font-weight: 800;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/heavy-italic.woff2");
-    font-style: italic;
+    src: url("/fonts/FranklinGothic/bold-italic.ttf");
     font-weight: 700;
+    font-style: italic;
     font-display: swap;
 }
 
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/bold-italic.woff2");
-    font-style: italic;
-    font-weight: 600;
-    font-display: swap;
-}
 
 @font-face {
     font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/medium-italic.woff2");
-    font-style: italic;
-    font-weight: 500;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/regular-italic.woff2");
-    font-style: italic;
+    src: url("/fonts/FranklinGothic/regular.ttf");
     font-weight: 400;
     font-display: swap;
 }
 
 @font-face {
     font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/light-italic.woff2");
-    font-style: italic;
-    font-weight: 300;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/extra-italic-light.woff2");
-    font-style: italic;
-    font-weight: 200;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "FranklinGothic";
-    src: url("/fonts/FranklinGothic/thin-italic.woff2");
-    font-style: italic;
+    src: url("/fonts/FranklinGothic/thin.ttf");
     font-weight: 100;
     font-display: swap;
 }
-
 
 @font-face {
     font-family: "NewsGothic";

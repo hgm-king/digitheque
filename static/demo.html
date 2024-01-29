@@ -25,7 +25,53 @@
     the comments to familiarize yourself with HTML.
 
     -->
-
+  <div class="marquee-wrapper">
+    <ul class="marquee">
+      <li>1HG</li>
+      <li>2HG</li>
+      <li>3HG</li>
+      <li>4HG</li>
+      <li>5HG</li>
+      <li>6HG</li>
+      <li>7HG</li>
+      <li>8HG</li>
+      <li>9HG</li>
+      <li>10HG</li>
+      <li>11HG</li>
+      <li>12HG</li>
+      <li>13HG</li>
+      <li>14HG</li>
+      <li>15HG</li>
+      <li>16HG</li>
+      <li>17HG</li>
+      <li>18HG</li>
+      <li>19HG</li>
+      <li>20HG</li>
+    </ul>
+    <!-- This is important to do double here... otherwise the loop skips a few frames -->
+    <ul class="marquee">
+      <li>1HG</li>
+      <li>2HG</li>
+      <li>3HG</li>
+      <li>4HG</li>
+      <li>5HG</li>
+      <li>6HG</li>
+      <li>7HG</li>
+      <li>8HG</li>
+      <li>9HG</li>
+      <li>10HG</li>
+      <li>11HG</li>
+      <li>12HG</li>
+      <li>13HG</li>
+      <li>14HG</li>
+      <li>15HG</li>
+      <li>16HG</li>
+      <li>17HG</li>
+      <li>18HG</li>
+      <li>19HG</li>
+      <li>20HG</li>
+    </ul>
+  </div>
   <header>
     <span id="logo"><a href="/" title="Site title">Digitheque</a></span>
     <nav>
@@ -38,12 +84,12 @@
   </header>
   <main>
     <section>
-      <h1>1. Headings &amp; Copy</h1>
+      <h1 id="headings_&_copy"><a href="#headings_&_copy">Headings & Copy</a></h1>
       <p>
         At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
         praesentium voluptatum deleniti atque corrupti quos.
       </p>
-      <h2>2. Katalog</h2>
+      <h2 id="catalog"><a href="#catalog">Catalog</a></h2>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -52,7 +98,7 @@
         cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
         non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </p>
-      <h3>3. Third header</h3>
+      <h3 id="third_header"><a href="#third_header">Third header</a></h3>
       <p>
         At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
         praesentium voluptatum deleniti atque corrupti quos dolores et quas
@@ -60,7 +106,7 @@
         in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
         fuga. Et harum quidem rerum facilis est et expedita distinctio.
       </p>
-      <h4>4. Fourth header</h4>
+      <h4 id="fourth_header"><a href="#fourth_header">Fourth header</a></h4>
       <p>
         Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
         consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt
@@ -70,7 +116,7 @@
         qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum
         qui dolorem eum fugiat quo voluptas nulla pariatur?"
       </p>
-      <h5>5. Fifth header</h5>
+      <h5 id="fifth_header"><a href="#fifth_header">Fifth header</a></h5>
       <p>
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
         doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
@@ -78,7 +124,7 @@
         ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
         consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
       </p>
-      <h6>6. Sixth header</h6>
+      <h6 id="sixth_header"><a href="#sixth_header">Sixth header</a></h6>
       <p>
         At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
         praesentium voluptatum deleniti atque corrupti quos.
@@ -89,6 +135,7 @@
       <h2>Links</h2>
       <a href="#">Sample text link</a>
       <a href="#">Sample button link</a>
+      <a class="external" target="_blank" href="https://google.com">External Google</a>
     </section>
     <hr />
     <section>
@@ -210,9 +257,9 @@
 
           <div>
             <label>Radio Buttons</label>
-              <label><input type="radio" name="radio" />Label 1</label>
-              <label><input type="radio" name="radio" />Label 2</label>
-              <label><input type="radio" name="radio" />Label 3</label>
+            <label><input type="radio" name="radio" />Label 1</label>
+            <label><input type="radio" name="radio" />Label 2</label>
+            <label><input type="radio" name="radio" />Label 3</label>
           </div>
 
           <div>

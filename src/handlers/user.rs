@@ -41,7 +41,7 @@ pub async fn profile_with_cookie(
 
 pub async fn logout() -> Result<impl warp::Reply, Infallible> {
     Ok(warp::reply::with_header(
-        warp::reply::html(views::common::landing_page()),
+        warp::reply::html(views::common::landing_page(None)),
         "Set-Cookie",
         format!("session=; Path=/"),
     ))
@@ -56,6 +56,7 @@ pub async fn login_form() -> Result<impl warp::Reply, Infallible> {
 }
 
 pub async fn login_error(err: Rejection) -> Result<impl Reply, Rejection> {
+    tracing::error!("{:?}", err);
     if let Some(NotFound) = err.find::<NotFound>() {
         let html = views::auth::login_form(Some(String::from("Error: Invalid login credentials")));
         let html = warp::reply::html(html);
@@ -66,6 +67,7 @@ pub async fn login_error(err: Rejection) -> Result<impl Reply, Rejection> {
 }
 
 pub async fn signup_error(err: Rejection) -> Result<impl Reply, Rejection> {
+    tracing::error!("{:?}", err);
     if let Some(e) = err.find::<ResourceError>() {
         let html = views::auth::login_form(Some(e.message.clone()));
         let html = warp::reply::html(html);

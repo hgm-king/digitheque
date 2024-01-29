@@ -3,22 +3,21 @@
 
 :root {
     --font-main: 'NewsGothic', 'Helvetica', sans-serif;
-    --font-header: 'AkzidenzGrotesk', 'Helvetica', sans-serif;
-    --font-logo: 'AlternativeGothic', 'Helvetica', sans-serif;
+    --font-header: 'FranklinGothic', 'Helvetica', sans-serif;
     --font-mono: menlo, monaco, 'Ubuntu Mono', 'Liberation Mono', 'Courier New', Courier, monospace;
     --text-1: #191919;
     --text-2: #fffdfd;
     --header-1: #2a2a2a;
     --background-1: #fffdfd;
     --background-2: #222222;
-    --brand-1: #ff4f00;
+    --brand-1: #ed1c2e;
     --link-1: #3291FF;
     --link-2: #0366D6;
     --button-text: #fffdfd;
 }
 
 
-@media (prefers-color-scheme:dark) {
+/* @media (prefers-color-scheme:dark) {
     :root {
         --text-2: #222222;
         --text-1: #fffdfd;
@@ -27,7 +26,7 @@
         --background-1: #222222;
         --button-text: #222222;
     }
-}
+} */
 
 * {
     box-sizing: border-box;
@@ -37,10 +36,10 @@
 
 body {
     margin: 0 auto;
-    max-width: 45em;
+    max-width: 50em;
     line-height: 1.5;
     letter-spacing: 0.5px;
-    padding: 2em 1em;
+    padding: 0;
     border-radius: 6px;
     overflow-x: hidden;
     word-break: break-word;
@@ -54,60 +53,8 @@ body {
     font-kerning: normal;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-header);
-    margin: 0;
-    margin-left: 1rem;
-    margin-bottom: 0.25em;
-    margin-top: 0.5em;
-    color: var(--header-1);
-    font-weight: 700;
-}
-
-h1 {
-    font-size: 2em;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-}
-
-h2 {
-    font-size: 1.75em;
-    font-weight: 100;
-    color: var(--text-1);
-    letter-spacing: -0.01em;
-}
-
-h3 {
-    font-size: 1.25em;
-    letter-spacing: -0.01em;
-}
-
-h4 {
-    font-size: 1.25em;
-    font-weight: 400;
-    color: var(--text-1);
-}
-
-h5 {
-    font-size: 1em;
-    letter-spacing: -0.01em;
-}
-
-h6 {
-    font-size: 1em;
-    font-weight: 400;
-    color: var(--text-1);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-p, dd {
-    /* max-width: 32em; */
-}
-
 main {
-    border-top: 3px dotted var(--text-1);
-    padding-top: 1rem;
+    margin: 0 1em;
 }
 
 hr {
@@ -115,6 +62,72 @@ hr {
     border-top: 3px dotted var(--text-1);
     border-bottom: none;
 }
+
+/*
+ *
+ * HEADINGS & COPY
+ *
+ */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-header);
+    margin: 0;
+    font-weight: 700;
+    /* margin-left: 1rem; */
+    line-height: 1em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+    text-decoration: none;
+    color: var(--text-1);
+}
+
+h1 a:visited, h2 a:visited, h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
+    color: var(--text-1);
+}
+
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
+    color: var(--text-1);
+    text-decoration: underline;
+}
+
+h1 {
+    font-family: var(--font-header);
+    font-size: 2.5em;
+    letter-spacing: -0.05em;
+}
+
+h2 {
+    font-size: 2em;
+    letter-spacing: -0.05em;
+}
+
+h3 {
+    font-size: 1.75em;
+    letter-spacing: -0.03em;
+}
+
+h4 {
+    font-size: 1.5em;
+    letter-spacing: -0.03em;
+}
+
+h5 {
+    font-size: 1.25em;
+    letter-spacing: -0.01em;
+}
+
+h6 {
+    font-size: 1em;
+    letter-spacing: -0.03em;
+}
+
+p, dd {
+    font-size: 1em;
+}
+
 
 a {
     color: var(--link-1)
@@ -124,89 +137,35 @@ a:hover {
     color: var(--link-2)
 }
 
-header {
-    font-family: var(--font-logo);
-    margin: auto;
-    margin-bottom: 2rem;
-    width: fit-content;
-    display: flex;
-    border: 1.5px solid var(--text-1);
-    border-radius: 100px;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0;
-    line-height: 1;
-
-    & nav {
-        width: fit-content;
-        padding: 0 0.5rem;
-    }
-
-    & nav ul {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: row;
-        justify-content: space-between;
-        margin: 0;
-
-        & li::marker {
-            content: none;
-        }
-
-        & li {
-            border: 1.5px solid var(--text-1);
-            border-right: none;
-            padding: 0.5rem 0.75rem 0.25rem 0.75rem;
-            font-size: 1.1em;
-            font-weight: 300;
-
-            & a {
-                text-decoration: none;
-                color: inherit;
-            }
-        }
-
-        & li:nth-last-child(1) {
-            border-radius: 0 100px 100px 0;
-            border-right: 1.5px solid var(--text-1);
-        }
-
-        & li:hover {
-            background-color: gainsboro;
-            color: var(--brand-1);
-        }
-
-        & a:hover {
-            color: var(--brand-1);
-        }
-    }
-
-    & #logo {
-        font-family: var(--font-logo);
-        font-weight: bold;
-        font-size: 2em;
-        letter-spacing: 0.01em;
-        padding: 0.3rem 1.5rem 0 1.5rem;
-        text-transform: uppercase;
-        background-color: var(--background-2);
-        border-radius: 100px 0 0 100px;
-        color: var(--text-2);
-        font-stretch: extra-condensed;
-
-        & a {
-            display: block;
-            text-decoration: none;
-            color: var(--text-2);
-        }
-
-        & a::first-letter {
-            font-size: 1.25em;
-        }
-    }
+a.external:hover::after {
+    content: "°";
 }
 
+
+p, blockquote {
+    margin-bottom: 1rem;
+}
+
+blockquote {
+    margin-left: 2rem;
+}
+
+code {
+    font-family: var(--font-mono);
+}
+
+img {
+    width: 100%;
+}
+/*
+ *
+ * LISTS
+ *
+ */
+
 ul {
-    margin-left: 1rem;
+    margin-left: 1.2rem;
+    margin-bottom: 1rem;
 
     & li::marker {
         color: var(--header-1);
@@ -214,6 +173,14 @@ ul {
     }
 }
 
+ul.tasks {
+    margin-left: 0rem;
+    margin-bottom: 1rem;
+
+    & li::marker {
+        content: none;
+    }
+}
 
 ol {
     margin-left: 1rem;
@@ -236,16 +203,11 @@ dd {
     margin-left: 1rem;
 }
 
-input,
-select,
-textarea {
-    font-family: inherit;
-    font-size: 100%;
-    width: 150px;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
+/*
+ *
+ * FORMS
+ *
+ */
 
 fieldset {
     padding-left: 2rem;
@@ -254,7 +216,8 @@ fieldset {
     & legend {
         font-size: 1.5em;
         font-weight: 500;
-        font-family: var(--font-logo);
+        font-family: var(--font-header);
+        letter-spacing: -0.01em;
         background-color: var(--background-2);
         color: var(--text-2);
         padding: 0 0.5rem;
@@ -265,54 +228,24 @@ fieldset {
         margin-bottom: 0.5rem;
     }
 
-    & input, select {
+    & input, select, textarea {
         width: 15em;
         padding: 0.2rem 0.1rem 0.1rem 0.1rem;
         margin-left: 1rem;
+        font-size: 100%;
+        box-sizing: border-box;
+        font-family: inherit;
     }
 
     & input[type="date"], input[type="datetime"] {
         width: 10em;
     }
 
-    input[type="checkbox"] {
-        appearance: none;
-        position: relative;
-        width: 1em;
-        height: 1em;
-        border: 1px solid var(--text-1);
-        /* Adjusts the position of the checkboxes on the text baseline */
-        vertical-align: -2px;
-        /* Set here so that Windows' High-Contrast Mode can override */
-        color: var(--text-1);
-        margin-right: 1rem;
-    }
-
-    input[type="checkbox"]::before {
-        content: "✖";
-        position: absolute;
-        font-size: 1em;
-        top: -0.05em;
-        right: 0.06em;
-        visibility: hidden;
-    }
-
-    input[type="checkbox"]:checked::before {
-        /* Use `visibility` instead of `display` to avoid recalculating layout */
-        visibility: visible;
-    }
-
-    input[type="checkbox"]:disabled {
-        border-color: black;
-        background: #ddd;
-        color: gray;
-    }
-
-    input[type="radio"] {
+    & input[type="radio"] {
         appearance: none;
     }
 
-    input[type="radio"] {
+    & input[type="radio"] {
         width: 1rem;
         height: 1rem;
         border-radius: 0.5rem;
@@ -324,7 +257,7 @@ fieldset {
         margin-left: 1rem;
     }
 
-    input[type="radio"]::before {
+    & input[type="radio"]::before {
         display: block;
         content: " ";
         width: 0.5rem;
@@ -335,30 +268,218 @@ fieldset {
         transform: translate(0.19rem, 0.19rem) scale(0);
     }
 
-    input[type="radio"]:checked::before {
+    & input[type="radio"]:checked::before {
         transform: translate(0.19rem, 0.19rem) scale(1);
     }
+
 }
 
-button, input[type="button"], input[type="submit"] {
-    font-family: var(--font-logo);
+textarea {
+    width: 100%;
+    height: 40em;
+    margin: 0.5rem;
+}
+
+/* These are used for task lists */
+input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+    width: 1em;
+    height: 1em;
+    border: 1px solid var(--text-1);
+    /* Adjusts the position of the checkboxes on the text baseline */
+    vertical-align: -2px;
+    /* Set here so that Windows' High-Contrast Mode can override */
+    color: var(--text-1);
+    margin-right: 1rem;
+}
+
+input[type="checkbox"]::before {
+    content: "✖";
+    position: absolute;
+    font-size: 1em;
+    top: -0.03em;
+    right: 0.07em;
+    visibility: hidden;
+}
+
+input[type="checkbox"]:checked::before {
+    /* Use `visibility` instead of `display` to avoid recalculating layout */
+    visibility: visible;
+}
+
+input[type="checkbox"]:disabled {
+    border-color: black;
+    background: #ddd;
+    color: gray;
+}
+
+button, input[type="button"], input[type="submit"], .button-link {
+    font-family: var(--font-header);
+    letter-spacing: -0.01em;
     background-color: var(--background-2);
     color: var(--button-text);
     font-weight: 500;
     padding: 0.5rem 1rem;
-    letter-spacing: 1px;
     font-size: 1.2em;
     border: none;
+    text-decoration: none;
 }
 
-p, blockquote {
-    margin-bottom: 1.5rem;
+.button-link:hover {
+    color: var(--text-2);
 }
 
-blockquote {
-    margin-left: 2rem;
+/*
+ *
+ * HEADER
+ *
+ */
+
+header {
+    width: 100%;
+    font-family: var(--font-header);
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-around;
+    padding: 1rem 0;
+    line-height: 1;
+    border-bottom: 3px dotted var(--text-1);
+    /* background-color: var(--brand-1); */
+
+    & nav {
+        width: 33%;
+        padding: 0 0.5rem;
+    }
+
+    & nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 0;
+
+        & li::marker {
+            content: none;
+        }
+
+        & li {
+            font-size: 1.1em;
+            letter-spacing: -0.01em;
+            font-weight: 700;
+
+            & a {
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+
+        & a:hover {
+            color: var(--brand-1);
+        }
+    }
+
+    & #logo {
+        font-family: var(--font-header);
+        font-weight: 700;
+        font-style: italic;
+        font-size: 2.5em;
+        letter-spacing: -0.04em;
+        /* text-transform: uppercase; */
+
+        & a {
+            display: block;
+            text-decoration: none;
+            color: var(--brand-1);
+        }
+
+        & a::first-letter {
+            font-size: 1.1em;
+            /* font-weight: 900; */
+        }
+
+        & a:hover {
+            text-decoration: underline;
+        }
+    }
 }
 
-code {
-    font-family: var(--font-mono);
+/*
+ *
+ * FOOTER
+ *
+ */
+
+ul.marquee {
+    animation: scroll 20s linear infinite;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-around;
+    gap: 4em;
+    min-width: 100%;
+    will-change: transform;
+    margin: 0;
+
+    & li {
+        min-width: fit-content;
+    }
+}
+
+.marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    gap: 4em;
+}
+
+@keyframes scroll {
+    0% {
+        -moz-transform: translateX(0);
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+
+    100% {
+        -moz-transform: translateX(calc(-100% - 4em));
+        -webkit-transform: translateX(calc(-100% - 4em));
+        transform: translateX(calc(-100% - 4em));
+    }
+}
+
+footer {
+    font-family: var(--font-header);
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-around;
+    padding: 1rem 0;
+    line-height: 1;
+    border-top: 3px dotted var(--text-1);
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    column-gap: 3rem;
+    row-gap: 4rem;
+    margin-top: 3rem;
+
+    & h1, h2, h3 {
+        grid-column: span 2;
+    }
+
+    & .tall-img {
+        grid-row: span 2;
+    }
+
+    & .sub-header {
+        font-size: 2.25rem;
+        font-weight: 400;
+        margin: 0;
+        margin-bottom: 0.5em;
+    }
 }

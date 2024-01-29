@@ -5,19 +5,26 @@ use std::{
 };
 use tower::ServiceBuilder;
 use tower_http::add_extension::AddExtensionLayer;
+use tracing_subscriber::fmt::format::FmtSpan;
 use warp::{
-    hyper::{service::make_service_fn, Server},
+    hyper::{server::conn::AddrIncoming, service::make_service_fn, Server},
     reply, Filter,
 };
-use tracing_subscriber::fmt::format::FmtSpan;
 
 use digitheque::{
-    assets_api, workspace_api, config::Config, db_conn::DbConn, handle_rejections, handlers, routes, user_api, Context,
+    assets_api,
+    config::Config,
+    db_conn::DbConn,
+    handle_rejections, handlers, routes, user_api,
+    utils::{load_certs, load_private_key},
+    workspace_api, Context,
 };
+use hyper_rustls::TlsAcceptor;
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
-    let filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "tracing=info,warp=trace".to_owned());
+    let filter = std::env::var("RUST_LOG")
+        .unwrap_or_else(|_| "digitheque=info,tracing=info,warp=trace".to_owned());
 
     // Configure the default `tracing` subscriber.
     // The `fmt` subscriber from the `tracing-subscriber` crate logs `tracing`
@@ -38,9 +45,11 @@ async fn main() -> Result<(), ()> {
     let end = assets_api!()
         .or(user_api!())
         .or(workspace_api!())
+        .or((routes::index_logged_in().and_then(handlers::index))
+            .or(routes::index_logged_out().and_then(handlers::index)))
         .or(
             // surface logged in data to errors
-            routes::user::logged_in_rejection().and_then(handlers::user::profile)
+            routes::user::logged_in_rejection().and_then(handlers::user::profile),
         )
         .map(|reply| reply::with_header(reply, "Access-Control-Allow-Origin", "*"))
         .recover(handle_rejections)
@@ -67,12 +76,27 @@ async fn main() -> Result<(), ()> {
 
     tracing::info!("👂 Listening on {}", socket_address);
 
-    let listener = TcpListener::bind(socket_address).unwrap();
-    Server::from_tcp(listener)
+    tracing::info!("🔐 TLS Enabled!");
+    // Load public certificate.
+    let certs = load_certs(&config.cert_path.clone().unwrap()).unwrap();
+    // Load private key.
+    let key = load_private_key(&config.key_path.clone().unwrap()).unwrap();
+    // Build TLS configuration.
+    // Create a TCP listener via tokio.
+    let incoming = AddrIncoming::bind(&socket_address).unwrap();
+    let acceptor = TlsAcceptor::builder()
+        .with_single_cert(certs, key)
         .unwrap()
-        .serve(app)
-        .await
-        .expect("Server to start normally");
+        .with_all_versions_alpn()
+        .with_incoming(incoming);
+    Server::builder(acceptor).serve(app).await.unwrap();
+
+    // let listener = TcpListener::bind(socket_address).unwrap();
+    // Server::from_tcp(listener)
+    //     .unwrap()
+    //     .serve(app)
+    //     .await
+    //     .expect("Server to start normally");
 
     Ok(())
 }
