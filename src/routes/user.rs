@@ -1,4 +1,5 @@
 use crate::{
+    GLOBAL_PRELUDE,
     models::{self, user::ExpandedUser},
     routes,
     utils::now,
@@ -20,7 +21,11 @@ pub fn logout() -> BoxedFilter<()> {
         .boxed()
 }
 
-pub fn signup() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
+pub fn signup() -> BoxedFilter<(
+    Context,
+    models::user::ExpandedUser,
+    models::workspace::WorkspaceWithChildren,
+)> {
     warp::path("signup")
         .and(warp::path::end())
         .and(warp::post())
@@ -35,7 +40,11 @@ pub fn signup() -> BoxedFilter<(Context, models::user::ExpandedUser, models::wor
         .boxed()
 }
 
-pub fn login() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
+pub fn login() -> BoxedFilter<(
+    Context,
+    models::user::ExpandedUser,
+    models::workspace::WorkspaceWithChildren,
+)> {
     warp::path("login")
         .and(warp::path::end())
         .and(warp::post())
@@ -50,7 +59,11 @@ pub fn login() -> BoxedFilter<(Context, models::user::ExpandedUser, models::work
         .boxed()
 }
 
-pub fn get_by_cookie() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
+pub fn get_by_cookie() -> BoxedFilter<(
+    Context,
+    models::user::ExpandedUser,
+    models::workspace::WorkspaceWithChildren,
+)> {
     warp::path::end()
         .and(warp::get())
         .and(authenticate_cookie())
@@ -216,7 +229,11 @@ pub fn authenticate_cookie() -> BoxedFilter<(Context, models::user::ExpandedUser
         .boxed()
 }
 
-pub fn logged_in_rejection() -> BoxedFilter<(Context, models::user::ExpandedUser, models::workspace::WorkspaceWithChildren)> {
+pub fn logged_in_rejection() -> BoxedFilter<(
+    Context,
+    models::user::ExpandedUser,
+    models::workspace::WorkspaceWithChildren,
+)> {
     warp::any()
         .and(filters::ext::get::<Context>())
         .and(warp::cookie("session"))
@@ -244,4 +261,83 @@ pub fn read_cookie() -> BoxedFilter<(Context, models::session::Session)> {
         .boxed()
 }
 
+pub fn update_style() -> BoxedFilter<(Context, models::user::ExpandedUser, Option<String>)> {
+    warp::path("style")
+        .and(warp::path::end())
+        .and(
+            warp::post()
+                .and(routes::user::authenticate_cookie())
+                .and(warp::body::form::<models::user::UpdateStyleApi>())
+                .and_then(update_user_style)
+                .untuple_one(),
+        )
+        .or(warp::get()
+            .and(routes::user::authenticate_cookie())
+            .map(|context, user| (context, user, None))
+            .untuple_one())
+        .unify()
+        .boxed()
+}
 
+pub fn update_prelude() -> BoxedFilter<(Context, models::user::ExpandedUser, Option<String>)> {
+    warp::path("prelude")
+        .and(warp::path::end())
+        .and(
+            warp::post()
+                .and(routes::user::authenticate_cookie())
+                .and(warp::body::form::<models::user::UpdatePreludeApi>())
+                .and_then(update_user_prelude)
+                .untuple_one(),
+        )
+        .or(warp::get()
+            .and(routes::user::authenticate_cookie())
+            .map(|context, user| (context, user, None))
+            .untuple_one())
+        .unify()
+        .boxed()
+}
+
+async fn update_user_prelude(
+    context: Context,
+    mut expanded_user: models::user::ExpandedUser,
+    new_prelude: models::user::UpdatePreludeApi,
+) -> Result<(Context, models::user::ExpandedUser, Option<String>), warp::Rejection> {
+    let mut conn = context.db_conn.get_conn();
+
+    let input = &format!(r#"
+            {}
+            {}
+            "#,
+        GLOBAL_PRELUDE, new_prelude.prelude.clone()
+    );
+    let mut env = bebop_lang::lisp::env::init_env();
+    let v = bebop_lang::lisp::lisp(&mut env, input);
+
+    expanded_user.user.prelude = Some(new_prelude.prelude);
+    models::user::update(&mut conn, &mut expanded_user.user).map_err(|e| {
+        tracing::error!("{:?}", e);
+        reject::custom(ServerError {
+            message: e.to_string(),
+        })
+    })?;
+
+    Ok((context, expanded_user, Some(v)))
+}
+
+async fn update_user_style(
+    context: Context,
+    mut expanded_user: models::user::ExpandedUser,
+    new_style: models::user::UpdateStyleApi,
+) -> Result<(Context, models::user::ExpandedUser, Option<String>), warp::Rejection> {
+    let mut conn = context.db_conn.get_conn();
+
+    expanded_user.user.style = Some(new_style.style);
+    models::user::update(&mut conn, &mut expanded_user.user).map_err(|e| {
+        tracing::error!("{:?}", e);
+        reject::custom(ServerError {
+            message: e.to_string(),
+        })
+    })?;
+
+    Ok((context, expanded_user, Some(String::from("Style updated!"))))
+}

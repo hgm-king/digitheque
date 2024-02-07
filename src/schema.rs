@@ -17,6 +17,8 @@ table! {
         created_at -> Timestamp,
         updated_at -> Nullable<Timestamp>,
         deleted_at -> Nullable<Timestamp>,
+        prelude -> Nullable<Text>,
+        style -> Nullable<Text>,
     }
 }
 
@@ -26,12 +28,12 @@ table! {
         name -> Varchar,
         description -> Varchar,
         type_id -> Int4,
-        styles -> Nullable<Text>,
         user_id -> Int4,
         created_at -> Timestamp,
         updated_at -> Nullable<Timestamp>,
         deleted_at -> Nullable<Timestamp>,
         content -> Nullable<Text>,
+        parent_id -> Int4,
     }
 }
 

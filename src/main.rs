@@ -74,29 +74,29 @@ async fn main() -> Result<(), ()> {
         .parse::<SocketAddr>()
         .expect("Addr to parse correctly");
 
-    tracing::info!("👂 Listening on {}", socket_address);
+    // tracing::info!("👂 Listening on {}", socket_address);
 
-    tracing::info!("🔐 TLS Enabled!");
-    // Load public certificate.
-    let certs = load_certs(&config.cert_path.clone().unwrap()).unwrap();
-    // Load private key.
-    let key = load_private_key(&config.key_path.clone().unwrap()).unwrap();
-    // Build TLS configuration.
-    // Create a TCP listener via tokio.
-    let incoming = AddrIncoming::bind(&socket_address).unwrap();
-    let acceptor = TlsAcceptor::builder()
-        .with_single_cert(certs, key)
-        .unwrap()
-        .with_all_versions_alpn()
-        .with_incoming(incoming);
-    Server::builder(acceptor).serve(app).await.unwrap();
-
-    // let listener = TcpListener::bind(socket_address).unwrap();
-    // Server::from_tcp(listener)
+    // tracing::info!("🔐 TLS Enabled!");
+    // // Load public certificate.
+    // let certs = load_certs(&config.cert_path.clone().unwrap()).unwrap();
+    // // Load private key.
+    // let key = load_private_key(&config.key_path.clone().unwrap()).unwrap();
+    // // Build TLS configuration.
+    // // Create a TCP listener via tokio.
+    // let incoming = AddrIncoming::bind(&socket_address).unwrap();
+    // let acceptor = TlsAcceptor::builder()
+    //     .with_single_cert(certs, key)
     //     .unwrap()
-    //     .serve(app)
-    //     .await
-    //     .expect("Server to start normally");
+    //     .with_all_versions_alpn()
+    //     .with_incoming(incoming);
+    // Server::builder(acceptor).serve(app).await.unwrap();
+
+    let listener = TcpListener::bind(socket_address).unwrap();
+    Server::from_tcp(listener)
+        .unwrap()
+        .serve(app)
+        .await
+        .expect("Server to start normally");
 
     Ok(())
 }

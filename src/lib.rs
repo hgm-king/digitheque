@@ -11,8 +11,8 @@ pub mod views;
 #[macro_use]
 extern crate diesel;
 
-use std::sync::Arc;
 use models::user::ExpandedUser;
+use std::sync::Arc;
 use warp::{hyper::StatusCode, reject, Rejection, Reply};
 
 #[derive(Debug)]
@@ -51,7 +51,6 @@ pub struct Context {
     pub db_conn: Arc<db_conn::DbConn>,
 }
 
-
 impl Context {
     pub fn new(config: Arc<config::Config>, db_conn: Arc<db_conn::DbConn>) -> Self {
         Context {
@@ -62,7 +61,10 @@ impl Context {
 }
 
 pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> {
-    let expanded_user = err.find::<ExpandedUserRejection>().map(|eu| eu.clone().expanded_user).unwrap_or(None);
+    let expanded_user = err
+        .find::<ExpandedUserRejection>()
+        .map(|eu| eu.clone().expanded_user)
+        .unwrap_or(None);
 
     tracing::error!("{:?}", err);
     tracing::error!("Handling rejection for user {:?}", expanded_user);
@@ -74,7 +76,8 @@ pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> 
             Ok(warp::reply::with_status(warp::reply::html(html), code))
         } else if let Some(_) = err.find::<NotAuthorized>() {
             let code = StatusCode::FORBIDDEN;
-            let html = views::error::error_page(code, "You are not authorized to do this", expanded_user);
+            let html =
+                views::error::error_page(code, "You are not authorized to do this", expanded_user);
             Ok(warp::reply::with_status(warp::reply::html(html), code))
         }
         // else if let Some(_) = err.find::<OldCookie>() {
@@ -90,7 +93,8 @@ pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> 
             Ok(warp::reply::with_status(warp::reply::html(html), code))
         } else if let Some(NotFound) = err.find::<NotFound>() {
             let code = StatusCode::NOT_FOUND;
-            let html = views::error::error_page(code, "We could not locate this resource", expanded_user);
+            let html =
+                views::error::error_page(code, "We could not locate this resource", expanded_user);
             Ok(warp::reply::with_status(warp::reply::html(html), code))
         } else if let Some(e) = err.find::<warp::filters::body::BodyDeserializeError>() {
             let message = e.to_string();
@@ -117,7 +121,8 @@ pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> 
             Ok(warp::reply::with_status(warp::reply::html(html), code))
         } else if let Some(_) = err.find::<NotAuthorized>() {
             let code = StatusCode::FORBIDDEN;
-            let html = views::error::error_page(code, "You are not authorized to do this", expanded_user);
+            let html =
+                views::error::error_page(code, "You are not authorized to do this", expanded_user);
             Ok(warp::reply::with_status(warp::reply::html(html), code))
         }
         // else if let Some(_) = err.find::<OldCookie>() {
@@ -131,10 +136,11 @@ pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> 
         //     let code = StatusCode::FORBIDDEN;
         //     let html = views::error::error_page(code, "You are not logged in", expanded_user);
         //     Ok(warp::reply::with_status(warp::reply::html(html), code))
-        // } 
+        // }
         else if let Some(NotFound) = err.find::<NotFound>() {
             let code = StatusCode::NOT_FOUND;
-            let html = views::error::error_page(code, "We could not locate this resource", expanded_user);
+            let html =
+                views::error::error_page(code, "We could not locate this resource", expanded_user);
             Ok(warp::reply::with_status(warp::reply::html(html), code))
         } else if let Some(e) = err.find::<warp::filters::body::BodyDeserializeError>() {
             let message = e.to_string();
@@ -170,3 +176,171 @@ pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> 
     //     Ok(warp::reply::with_status(warp::reply::html(html), code))
     // }
 }
+
+const DEFAULT_WORKSPACE_CONTENT: &str = r#"
+|
+(h1 title)
+(h2 description)
+(p "Hello from LISP")
+|
+
+### Enjoy your new workspace
+You can write in this text area using markdown. You can see an example above that uses the LISP inline. `title` and `description` are special keywords that are defined for each workspace. There are a bunch of HTML functions that you can use. as well to write functions and use typical functional programming patterns.
+
+### Need help?
+- [Markdown Spec](/markdown)
+- [Bebop Spec](/bebop)
+- [CSS Spec](/css)
+- [What is digitheque](/digitheque)
+"#;
+
+const GLOBAL_PRELUDE: &str = r#"concat
+
+(def [fun]
+    (\ [args body] 
+        [def (list (head args)) 
+        (\ (tail args) body)]))
+
+(fun [h1 children]
+    [concat "<h1>" children "</h1>"])
+
+(fun [h2 children]
+    [concat "<h2>" children "</h2>"])
+
+(fun [h3 children]
+    [concat "<h3>" children "</h3>"])
+
+(fun [h4 children]
+    [concat "<h4>" children "</h4>"])
+
+(fun [h5 children]
+    [concat "<h5>" children "</h5>"])
+
+(fun [h6 children]
+    [concat "<h6>" children "</h6>"])
+
+(fun [blockquote children]
+    [concat "<blockquote>" children "</blockquote>"])
+
+(fun [code children]
+    [concat "<code>" children "</code>"])
+
+(fun [pre children]
+    [concat "<pre>" children "</pre>"])
+
+(fun [p children]
+    [concat "<p>" children "</p>"])
+
+(fun [em children]
+    [concat "<em>" children "</em>"]) 
+
+(fun [strike children]
+    [concat "<s>" children "</s>"]) 
+
+(fun [strong children]
+    [concat "<strong>" children "</strong>"])
+
+(fun [li children]
+    [concat "<li>" children "</li>"])
+
+(fun [ul children]
+    [concat "<ul>" children "</ul>"])
+
+(fun [tasks children]
+    [concat "<ul class='tasks'>" children "</ul>"])
+
+(fun [ol children]
+    [concat "<ol>" children "</ol>"])
+
+(def [checked] "<input type='checkbox' checked />")
+
+(def [unchecked] "<input type='checkbox' />")
+
+(fun [ol children]
+    [concat "<ol>" children "</ol>"])
+
+(fun [img src alt]
+    [concat "<img src='" src "' alt='" alt "' />"])
+    
+(fun [a href children]
+    [concat "<a href='" href "'>" children "</a>"])
+
+(fun [a-out href children]
+    [concat "<a target='_blank' href='" href "'>" children "</a>"])
+
+(def [hr]
+    "<hr/>")
+
+(def [empty]
+    "<div></div>")
+
+(fun [color children]
+    [concat "<span style='color: " children ";'>◼</span>" children])
+
+(def [true]
+    1)
+    
+(def [false]
+    0)
+
+(def [nil] ())
+
+(fun [not n]
+    [if (== n 0) [1] [0]])
+
+(fun [is-nil n] 
+    [== n nil])
+
+(fun [not-nil n] 
+    [not (== n nil)])
+
+(fun [dec n] [- n 1])
+
+(def [fun] 
+    (\ [args body] 
+        [def (list (head args)) 
+        (\ (tail args) body)]))
+
+(fun [cons x xs]
+    [join
+        (if (== x [])
+            [x]
+            [list x])
+        xs])
+
+(fun [is-empty l] 
+    [if (== l []) 
+        [true] 
+        [false]])
+
+(fun [len l] 
+    [if (is-empty l) 
+        [0] 
+        [+ 1 (len (tail l))]])
+
+(fun [rec target base step]
+    [if (== 0 target)
+        [base]
+        [step (dec target)
+            (\ [] [rec (dec target) base step])]])
+
+(fun [rec-list target base step]
+    [if (== 0 (len target))
+        [base]
+        [step 
+            (head target)
+            (\ [] [rec-list (tail target) base step])]])
+
+(fun [map target mapper]
+    [rec-list target [] (\ [e es] [cons (mapper e) (es)])])
+
+(fun [filter target filterer]
+    [rec-list target [] (\ [e es] [if (filterer e) [cons e (es)] [(es)]])])
+
+(fun [nth n l]
+    [head (rec n
+        l
+        (\ [n-1 nthn-1] [tail (nthn-1)]))])
+
+(fun [append n] [eval (cons concat n)])
+"#;

@@ -36,6 +36,14 @@ macro_rules! user_api {
                         routes::user::signup_form()
                         .and_then(handlers::user::signup_form))
                     .or(
+                        // style form
+                        routes::user::update_prelude()
+                        .and_then(handlers::user::edit_prelude))
+                    .or(
+                        // prelude form
+                        routes::user::update_style()
+                        .and_then(handlers::user::edit_style))
+                    .or(
                         // redirect login page to profile if signed in
                         routes::user::login_form()
                         .and(routes::user::authenticate_cookie())

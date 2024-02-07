@@ -1,8 +1,4 @@
-use crate::{
-    models,
-    schema::{workspace, workspace_element},
-    utils::now,
-};
+use crate::{schema::workspace, utils::now, DEFAULT_WORKSPACE_CONTENT};
 use chrono::naive::NaiveDateTime;
 use diesel::prelude::*;
 use serde::Deserialize;
@@ -30,12 +26,12 @@ pub struct Workspace {
     pub name: String,
     pub description: String,
     pub type_id: i32,
-    pub styles: Option<String>,
     pub user_id: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
     pub content: Option<String>,
+    pub parent_id: i32,
 }
 
 pub struct WorkspaceWithChildren {
@@ -44,17 +40,6 @@ pub struct WorkspaceWithChildren {
 }
 
 pub struct JoinedWorkspace {
-    pub parent_id: i32,
-    pub parent_name: String,
-    pub parent_description: String,
-    pub parent_type_id: i32,
-    pub parent_styles: Option<String>,
-    pub parent_user_id: i32,
-    pub parent_created_at: NaiveDateTime,
-    pub parent_updated_at: Option<NaiveDateTime>,
-    pub parent_deleted_at: Option<NaiveDateTime>,
-    pub parent_content: Option<String>,
-
     pub id: i32,
     pub name: String,
     pub description: String,
@@ -65,6 +50,18 @@ pub struct JoinedWorkspace {
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
     pub content: Option<String>,
+    pub parent_id: i32,
+
+    pub child_id: i32,
+    pub child_name: String,
+    pub child_description: String,
+    pub child_type_id: i32,
+    pub child_user_id: i32,
+    pub child_created_at: NaiveDateTime,
+    pub child_updated_at: Option<NaiveDateTime>,
+    pub child_deleted_at: Option<NaiveDateTime>,
+    pub child_content: Option<String>,
+    pub child_parent_id: i32,
 }
 
 #[derive(Deserialize)]
@@ -72,7 +69,6 @@ pub struct NewWorkspaceApi {
     pub name: String,
     pub description: String,
     pub type_id: i32,
-    // pub content: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -97,16 +93,16 @@ pub struct NewWorkspace {
     pub name: String,
     pub description: String,
     pub type_id: i32,
-    pub styles: Option<String>,
     pub user_id: i32,
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
     pub content: Option<String>,
+    pub parent_id: i32
 }
 
 impl NewWorkspace {
-    pub fn new(new_workspace: NewWorkspaceApi, creator_user_id: i32) -> Self {
+    pub fn new(new_workspace: NewWorkspaceApi, creator_user_id: i32, parent_id: i32) -> Self {
         NewWorkspace {
             user_id: creator_user_id,
             created_at: now(),
@@ -115,8 +111,8 @@ impl NewWorkspace {
             name: new_workspace.name,
             description: new_workspace.description,
             type_id: new_workspace.type_id,
-            content: None,
-            styles: None,
+            content: Some(String::from(DEFAULT_WORKSPACE_CONTENT)),
+            parent_id
         }
     }
 
@@ -143,29 +139,19 @@ pub fn read_by_user_and_id(
     user_id: i32,
     id: i32,
 ) -> Result<Option<WorkspaceWithChildren>, diesel::result::Error> {
-    // workspace::table.first::<Workspace>(conn)
     let (parent, children) = diesel::alias!(workspace as parent, workspace as children);
     parent
         .left_join(
-            workspace_element::table
-                .on(parent.field(workspace::id).eq(workspace_element::parent_id)),
-        )
-        .left_join(
             children.on(children
-                .field(workspace::id)
-                .eq(workspace_element::child_id)),
+                .field(workspace::parent_id)
+                .eq(parent.field(workspace::id))),
         )
-        .filter(parent.field(workspace::id).eq(id))
         .filter(parent.field(workspace::deleted_at).is_null())
-        // .filter(children.field(workspace::deleted_at).is_null())
+        .filter(children.field(workspace::deleted_at).is_null())
         .filter(parent.field(workspace::user_id).eq(user_id))
-        // .filter(children.field(workspace::user_id).eq(user_id))
-        // .or_filter(children.field(workspace::user_id).is_null())
-        .load::<(
-            Workspace,
-            Option<models::workspace_element::WorkspaceElement>,
-            Option<Workspace>,
-        )>(conn)
+        // .filter(children.field(workspace::user_id).eq(user_id)) or null?
+        .filter(parent.field(workspace::id).eq(id))
+        .load::<(Workspace, Option<Workspace>)>(conn)
         .map(|res| {
             if res.len() > 0 {
                 let workspace_with_child = WorkspaceWithChildren {
@@ -174,8 +160,8 @@ pub fn read_by_user_and_id(
                 };
                 let workspace_with_child = res
                     .into_iter()
-                    .filter(|(_, _, workspace)| workspace.is_some())
-                    .fold(workspace_with_child, |mut acc, (_, _, workspace)| {
+                    .filter(|(_, workspace)| workspace.is_some())
+                    .fold(workspace_with_child, |mut acc, (_, workspace)| {
                         acc.children.push(workspace.unwrap());
                         acc
                     });
@@ -195,22 +181,16 @@ pub fn read_root_by_user(
     let (parent, children) = diesel::alias!(workspace as parent, workspace as children);
     parent
         .left_join(
-            workspace_element::table
-                .on(parent.field(workspace::id).eq(workspace_element::parent_id)),
-        )
-        .left_join(
             children.on(children
-                .field(workspace::id)
-                .eq(workspace_element::child_id)),
+                .field(workspace::parent_id)
+                .eq(parent.field(workspace::id))),
         )
         .filter(parent.field(workspace::deleted_at).is_null())
+        .filter(children.field(workspace::deleted_at).is_null())
         .filter(parent.field(workspace::user_id).eq(user_id))
-        .filter(parent.field(workspace::type_id).eq(1))
-        .load::<(
-            Workspace,
-            Option<models::workspace_element::WorkspaceElement>,
-            Option<Workspace>,
-        )>(conn)
+        // .filter(children.field(workspace::user_id).eq(user_id)) or null?
+        .filter(parent.field(workspace::parent_id).eq(-1))
+        .load::<(Workspace, Option<Workspace>)>(conn)
         .map(|res| {
             if res.len() > 0 {
                 let workspace_with_child = WorkspaceWithChildren {
@@ -219,8 +199,8 @@ pub fn read_root_by_user(
                 };
                 let workspace_with_child = res
                     .into_iter()
-                    .filter(|(_, _, workspace)| workspace.is_some())
-                    .fold(workspace_with_child, |mut acc, (_, _, workspace)| {
+                    .filter(|(_, workspace)| workspace.is_some())
+                    .fold(workspace_with_child, |mut acc, (_, workspace)| {
                         acc.children.push(workspace.unwrap());
                         acc
                     });
@@ -243,7 +223,7 @@ pub fn update(conn: &mut PgConnection, id: i32, workspace: EditWorkspaceApi) -> 
         updated_at: Some(now()),
         name: workspace.name,
         description: workspace.description,
-        content: workspace.content
+        content: workspace.content,
     };
 
     diesel::update(workspace::table)
@@ -257,19 +237,16 @@ pub fn update(conn: &mut PgConnection, id: i32, workspace: EditWorkspaceApi) -> 
 fn test_diesel() {
     let (parent, children) = diesel::alias!(workspace as parent, workspace as children);
     let sql = parent
-        .left_join(
-            workspace_element::table
-                .on(parent.field(workspace::id).eq(workspace_element::parent_id)),
-        )
-        .left_join(
-            children.on(children
-                .field(workspace::id)
-                .eq(workspace_element::child_id)),
-        )
-        .filter(parent.field(workspace::id).eq(1))
-        .filter(parent.field(workspace::deleted_at).is_null())
-        // .filter(children.field(workspace::deleted_at).is_null())
-        .filter(parent.field(workspace::user_id).eq(3));
+    .left_join(
+        children.on(children
+            .field(workspace::parent_id)
+            .eq(parent.field(workspace::id))),
+    )
+    .filter(parent.field(workspace::deleted_at).is_null())
+    .filter(children.field(workspace::deleted_at).is_null())
+    .filter(parent.field(workspace::user_id).eq(1))
+    .filter(children.field(workspace::user_id).eq(1))
+    .filter(parent.field(workspace::id).eq(2));
     assert_eq!(
         diesel::debug_query::<diesel::pg::Pg, _>(&sql).to_string(),
         "SELECT `users`.`id`, `users`.`name` FROM `users` \

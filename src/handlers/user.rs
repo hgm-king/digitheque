@@ -76,3 +76,23 @@ pub async fn signup_error(err: Rejection) -> Result<impl Reply, Rejection> {
         Err(err)
     }
 }
+
+pub async fn edit_style(
+    _context: Context,
+    expanded_user: models::user::ExpandedUser,
+    message: Option<String>
+) -> Result<impl warp::Reply, warp::Rejection> {
+    let style_html = views::user::style_edit_page(expanded_user,message);
+
+    Ok(warp::reply::html(style_html))
+}
+
+pub async fn edit_prelude(
+    _context: Context,
+    expanded_user: models::user::ExpandedUser,
+    message: Option<String>
+) -> Result<impl warp::Reply, warp::Rejection> {
+    let prelude_html = views::user::prelude_edit_page(expanded_user,message);
+
+    Ok(warp::reply::html(prelude_html))
+}

@@ -7,7 +7,7 @@ use chrono::naive::NaiveDateTime;
 use diesel::prelude::*;
 use serde::Deserialize;
 
-#[derive(Clone, Debug, Identifiable, Queryable, AsChangeset, Selectable)]
+#[derive(Clone, Debug, Identifiable, Queryable, Selectable)]
 #[diesel(table_name = user)]
 pub struct User {
     pub id: i32,
@@ -16,25 +16,8 @@ pub struct User {
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
-}
-
-impl User {
-    pub fn for_update(&self) -> Self {
-        Self {
-            id: self.id,
-            username: self.username.clone(),
-            password: self.password.clone(),
-            created_at: self.created_at.clone(),
-            updated_at: Some(now()),
-            deleted_at: self.deleted_at.clone(),
-        }
-    }
-
-    pub fn inject_values(&self, string: &str) -> String {
-        string
-            .replace("{user.id}", &self.id.to_string())
-            .replace("{user.username}", &self.username)
-    }
+    pub style: Option<String>,
+    pub prelude: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -87,6 +70,8 @@ pub struct NewUser {
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
+    pub style: Option<String>,
+    pub prelude: Option<String>,
 }
 
 impl NewUser {
@@ -97,6 +82,8 @@ impl NewUser {
             created_at: now(),
             updated_at: None,
             deleted_at: None,
+            style: None,
+            prelude: None,
         }
     }
 
@@ -146,7 +133,8 @@ pub fn delete(conn: &mut PgConnection, user: &User) -> QueryResult<usize> {
 
 pub fn update(conn: &mut PgConnection, user: &mut User) -> QueryResult<usize> {
     diesel::update(user::table)
-        .set(&user.for_update())
+        .filter(user::id.eq(user.id))
+        .set((user::updated_at.eq(Some(now())), user::style.eq(user.style.clone()),user::prelude.eq(user.prelude.clone())))
         .execute(conn)
 }
 
@@ -168,4 +156,14 @@ pub fn read_user_by_session(
 
 pub fn cleanup_table(conn: &mut PgConnection) {
     diesel::delete(user::table).execute(conn).unwrap();
+}
+
+#[derive(Deserialize)]
+pub struct UpdateStyleApi {
+    pub style: String,
+}
+
+#[derive(Deserialize)]
+pub struct UpdatePreludeApi {
+    pub prelude: String,
 }
