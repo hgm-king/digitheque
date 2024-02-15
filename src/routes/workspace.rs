@@ -98,23 +98,15 @@ async fn with_update_workspace(
     context: Context,
     expanded_user: models::user::ExpandedUser,
     edit_workspace: models::workspace::EditWorkspaceApi,
-) -> Result<
-    (
-        i32,
-        Context,
-        models::user::ExpandedUser,
-    ),
-    warp::Rejection,
-> {
+) -> Result<(i32, Context, models::user::ExpandedUser), warp::Rejection> {
     let mut conn = context.db_conn.get_conn();
 
-    models::workspace::update(&mut conn, id, edit_workspace)
-        .map_err(|e| {
-            tracing::error!("{:?}", e);
-            reject::custom(ServerError {
-                message: e.to_string(),
-            })
-        })?;
+    models::workspace::update(&mut conn, id, edit_workspace).map_err(|e| {
+        tracing::error!("{:?}", e);
+        reject::custom(ServerError {
+            message: e.to_string(),
+        })
+    })?;
 
     Ok((id, context, expanded_user))
 }
@@ -149,22 +141,18 @@ pub async fn with_new_workspace(
     context: Context,
     expanded_user: models::user::ExpandedUser,
     new_workspace: models::workspace::NewWorkspaceApi,
-) -> Result<
-(
-    i32,
-    Context,
-    models::user::ExpandedUser,
-),
-warp::Rejection,
-> {
+) -> Result<(i32, Context, models::user::ExpandedUser), warp::Rejection> {
     let mut conn = context.db_conn.get_conn();
 
-    let _new_workspace = models::workspace::NewWorkspace::new(new_workspace, expanded_user.user.id, parent_id).insert(&mut conn).map_err(|e| {
-        tracing::error!("{:?}", e);
-        reject::custom(ServerError {
-            message: e.to_string(),
-        })
-    })?;
+    let _new_workspace =
+        models::workspace::NewWorkspace::new(new_workspace, expanded_user.user.id, parent_id)
+            .insert(&mut conn)
+            .map_err(|e| {
+                tracing::error!("{:?}", e);
+                reject::custom(ServerError {
+                    message: e.to_string(),
+                })
+            })?;
 
     Ok((parent_id, context, expanded_user))
 }
@@ -194,7 +182,7 @@ pub async fn insert_root_workspace(
             // content: None,
         },
         expanded_user.user.id,
-        -1
+        -1,
     );
 
     let workspace = new_workspace.insert(&mut conn).map_err(|e| {

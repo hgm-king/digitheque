@@ -2,6 +2,7 @@ use crate::{
     models,
     schema::{session, user},
     utils::{encrypt, now, sanitize_html, verify},
+    DEFAULT_PRELUDE_CONTENT,
 };
 use chrono::naive::NaiveDateTime;
 use diesel::prelude::*;
@@ -83,7 +84,7 @@ impl NewUser {
             updated_at: None,
             deleted_at: None,
             style: None,
-            prelude: None,
+            prelude: Some(DEFAULT_PRELUDE_CONTENT.to_string()),
         }
     }
 
@@ -134,7 +135,11 @@ pub fn delete(conn: &mut PgConnection, user: &User) -> QueryResult<usize> {
 pub fn update(conn: &mut PgConnection, user: &mut User) -> QueryResult<usize> {
     diesel::update(user::table)
         .filter(user::id.eq(user.id))
-        .set((user::updated_at.eq(Some(now())), user::style.eq(user.style.clone()),user::prelude.eq(user.prelude.clone())))
+        .set((
+            user::updated_at.eq(Some(now())),
+            user::style.eq(user.style.clone()),
+            user::prelude.eq(user.prelude.clone()),
+        ))
         .execute(conn)
 }
 

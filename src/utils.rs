@@ -1,7 +1,7 @@
 use chrono::prelude::*;
 use pwhash::bcrypt;
 use sanitize_html::{rules::predefined::DEFAULT, sanitize_str};
-use std::{io, fs};
+use std::{fs, io};
 
 pub fn now() -> chrono::naive::NaiveDateTime {
     Utc::now().naive_local()

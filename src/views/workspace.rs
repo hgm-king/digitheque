@@ -19,19 +19,19 @@ impl Display for Workspace {
             f,
             "{}",
             html! {
-                <main>
-                    <aside id="sub-workspaces">
-                        {if self.workspace.workspace.parent_id != -1 {
-                            html! {<h4><a href={format!("/workspace/{}", self.workspace.workspace.parent_id)}>"← Back to parent"</a></h4>}
-                        } else {
-                            String::from("")
-                        }}
-                        <h3>"Subworkspaces"</h3>
-                        {WorkspaceChildren(self.workspace.children.clone())}
-                        <h4>"Add new"</h4>
-                        <form action={format!("/workspace/{}", self.workspace.workspace.id)} method="POST">
-                            <fieldset>
-                                <legend>"Workspace details"</legend>
+                <main id="workspace-container">
+                    <aside>
+                        <h3><a class="red" href={format!("/workspace/{}/edit", self.workspace.workspace.id)}>"✎ Start drafting"</a></h3>
+                        <div id="active-workspace">
+                            <h3>
+                                {if self.workspace.workspace.parent_id != -1 {
+                                    html! {<a class="red" href={format!("/workspace/{}", self.workspace.workspace.parent_id)}>"← Back to parent"</a>}
+                                } else {
+                                    String::from("Root workspace")
+                                }}
+                            </h3>
+                            <h4>"Add new"</h4>
+                            <form action={format!("/workspace/{}", self.workspace.workspace.id)} method="POST">
                                 <label>
                                     <span>"Name"</span>
                                     <input type="text" name="name" required max=64 />
@@ -42,14 +42,15 @@ impl Display for Workspace {
                                 </label>
                                 <input type="hidden" name="type_id" value=2 />
                                 <button type="submit">"Add new"</button>
-                            </fieldset>
-                        </form>
+                            </form>
+                        </div>
+                        <div id="sub-workspaces">
+                            <h3>"Subworkspaces"</h3>
+                            {WorkspaceChildren(self.workspace.children.clone())}
+                        </div>
                     </aside>
                     <section id="workspace">
-                        <a href={format!("/workspace/{}/edit", self.workspace.workspace.id)}>"Edit me!"</a>
-                        <div class="markdown">
-                            {handle_workspace_type(&self.expanded_user, &self.workspace.workspace)}
-                        </div>
+                        {handle_workspace_type(&self.expanded_user, &self.workspace.workspace)}
                     </section>
                 </main>
             }
@@ -95,8 +96,24 @@ impl Display for WorkspaceEdit {
             f,
             "{}",
             html! {
-                <main>
-                    <section>
+                <main id="workspace-container">
+                    <aside>
+                        <h3><a class="red" href={format!("/workspace/{}", self.workspace.workspace.id)}>"✕ Cancel edit"</a></h3>
+                        <div id="active-workspace">
+                            <h3>
+                                {if self.workspace.workspace.parent_id != -1 {
+                                    html! {<a class="red" href={format!("/workspace/{}", self.workspace.workspace.parent_id)}>"← Back to parent"</a>}
+                                } else {
+                                    String::from("Root workspace")
+                                }}
+                            </h3>
+                        </div>
+                        <div id="sub-workspaces">
+                            <h3>"Subworkspaces"</h3>
+                            {WorkspaceChildren(self.workspace.children.clone())}
+                        </div>
+                    </aside>
+                    <section id="edit-workspace">
                         <h3>"Edit"</h3>
                         {handle_workspace_edit(&self.workspace.workspace)}
                     </section>
@@ -129,6 +146,7 @@ fn handle_workspace_type(
             (def [title] "{}")
             (def [description] "{}")
             (def [updated-at] "{}")
+            (def [id] "{}")
             {}
             "#,
                 GLOBAL_PRELUDE,
@@ -136,6 +154,7 @@ fn handle_workspace_type(
                 workspace.name,
                 workspace.description,
                 workspace.updated_at.unwrap_or_default(),
+                workspace.id,
                 lisp
             );
 
@@ -150,8 +169,18 @@ fn handle_workspace_type(
 fn handle_workspace_edit(workspace: &models::workspace::Workspace) -> String {
     html! {
         <form action={format!("/workspace/{}/edit", workspace.id)} method="POST">
-            <input type="text" name="name" value={workspace.name.clone()} />
-            <input type="text" name="description" value={workspace.description.clone()} />
+            <div>
+                <label>
+                    <span>"Name"</span>
+                    <input type="text" name="name" value={workspace.name.clone()} />
+                </label>
+            </div>
+            <div>
+                <label>
+                    <span>"Description"</span>
+                    <input type="text" name="description" value={workspace.description.clone()} />
+                </label>
+            </div>
             {match models::workspace::WorkspaceType::from_i32(workspace.type_id) {
                 _ => html! {
                     <textarea name="content">{workspace.content.clone().unwrap_or(String::from("# Edit me to get started!\nMake sure to save using the button at the bottom.\n"))}</textarea>

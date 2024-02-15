@@ -16,9 +16,9 @@ impl Display for Signup {
             f,
             "{}",
             html! {
-                <main>
+                <main id="signup">
                     <h1>"Signup form"</h1>
-                    <form id="signup" action="/user/signup" method="POST">
+                    <form action="/user/signup" method="POST">
                         <fieldset class="signup-fields">
                             <legend>"User credentials"</legend>
                             <div>
@@ -62,9 +62,9 @@ impl Display for Login {
             f,
             "{}",
             html! {
-                <main>
+                <main id="login">
                     <h1>"Login form"</h1>
-                    <form id="login" action="/user/login" method="POST">
+                    <form action="/user/login" method="POST">
                         <fieldset class="login-fields">
                             <legend>"User credentials"</legend>
                             <div>
@@ -95,7 +95,7 @@ impl Display for Login {
 pub fn login_form(error: Option<String>) -> String {
     let body = Body(vec![
         Box::new(Header {
-            expanded_user: None
+            expanded_user: None,
         }),
         Box::new(Login {
             error: error.unwrap_or(String::from("")),
@@ -112,7 +112,7 @@ pub fn login_form(error: Option<String>) -> String {
 pub fn signup_form<'a>(error: Option<String>) -> String {
     let body: Body = Body(vec![
         Box::new(Header {
-            expanded_user: None
+            expanded_user: None,
         }),
         Box::new(Signup {
             error: error.unwrap_or(String::from("")),

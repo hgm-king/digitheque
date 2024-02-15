@@ -185,13 +185,20 @@ const DEFAULT_WORKSPACE_CONTENT: &str = r#"
 |
 
 ### Enjoy your new workspace
+This is a program that gets ran each time it is viewed. You can write [Bebop](/bebop) to do all sorts of cool things.
 You can write in this text area using markdown. You can see an example above that uses the LISP inline. `title` and `description` are special keywords that are defined for each workspace. There are a bunch of HTML functions that you can use. as well to write functions and use typical functional programming patterns.
+
+|(a (concat "/workspace/" id "/edit") "Edit this workspace here!" )|
 
 ### Need help?
 - [Markdown Spec](/markdown)
 - [Bebop Spec](/bebop)
 - [CSS Spec](/css)
 - [What is digitheque](/digitheque)
+"#;
+
+const DEFAULT_PRELUDE_CONTENT: &str = r#"
+(concat "Hello from Prelude! This is executed at the beginning of each of your programs :) " (a "/user/prelude" "Edit your global prelude here!"))
 "#;
 
 const GLOBAL_PRELUDE: &str = r#"concat

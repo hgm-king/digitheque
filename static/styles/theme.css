@@ -1,0 +1,464 @@
+/*
+ *
+ * Badmon Style - Class-less CSS
+ *
+ */
+
+@import "/styles/normalize.css";
+@import "/styles/fonts.css";
+
+:root {
+    --font-main: 'NewsGothic', 'Helvetica', sans-serif;
+    --font-header: 'FranklinGothic', 'Helvetica', sans-serif;
+    --font-mono: menlo, monaco, 'Ubuntu Mono', 'Liberation Mono', 'Courier New', Courier, monospace;
+    --text-1: #191919;
+    --text-2: #fffdfd;
+    --header-1: #2a2a2a;
+    --background-1: #fffdfd;
+    --background-2: #222222;
+    --brand-1: #ed1c2e;
+    --link-1: #3291FF;
+    --link-2: #0366D6;
+    --button-text: #fffdfd;
+}
+
+/* @media (prefers-color-scheme:dark) {
+    :root {
+    }
+} */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0 auto;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    padding: 0;
+    border-radius: 6px;
+    overflow-x: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    background: var(--background-1);
+    color: var(--text-1);
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern'1;
+    font-kerning: normal;
+}
+
+main {
+}
+
+aside {
+    & h3 {
+        margin-bottom: 0.25em;
+    }
+
+    & li {
+        margin-bottom: 0.25em;
+    }
+}
+
+#workspace {
+    & h1, h2, h3, h4, h5, h6 {
+        margin-bottom: 0.5em;
+    }
+}
+
+header {
+    font-family: var(--font-header);
+    line-height: 1;
+    border-bottom: 3px solid var(--text-1);
+
+    & nav {
+
+        & ul {
+            margin: 0;
+            display: flex;
+
+            & li::marker {
+                content: none;
+            }
+
+            & li {
+                font-size: 1.1em;
+                letter-spacing: -0.01em;
+                font-weight: 700;
+                margin-right: 1rem;
+
+                & a {
+                    text-decoration: none;
+                    color: inherit;
+                }
+            }
+
+            & a:hover {
+                color: var(--brand-1);
+                /* text-decoration: underline; */
+            }
+        }
+    }
+
+    & #logo {
+        font-family: var(--font-header);
+        font-weight: 700;
+        font-size: 2.5em;
+        letter-spacing: -0.04em;
+
+        & a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        & a::first-letter {
+            font-size: 1.1em;
+        }
+
+        & a:hover {
+            /* color: var(--brand-1); */
+        }
+    }
+}
+
+footer {
+    font-family: var(--font-header);
+    padding: 1rem 0;
+    line-height: 1;
+    border-top: 3px solid var(--text-1);
+}
+
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-header);
+    margin: 0;
+    font-weight: 700;
+    line-height: 1em;
+}
+
+h3, h4, h5, h6 {
+    margin-bottom: 0.5em;
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+    text-decoration: none;
+    color: currentColor;
+}
+
+h1 a:visited, h2 a:visited, h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
+    color: currentColor;
+}
+
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
+    color: currentColor;
+    text-decoration: underline;
+}
+
+aside > h3 > a.red, #active-workspace > h3 > a.red {
+    color: var(--brand-1);
+}
+
+h1 {
+    font-family: var(--font-header);
+    font-size: 2.5em;
+    letter-spacing: -0.05em;
+}
+
+h2 {
+    font-size: 2em;
+    letter-spacing: -0.05em;
+}
+
+h3 {
+    font-size: 1.75em;
+    letter-spacing: -0.03em;
+}
+
+h4 {
+    font-size: 1.5em;
+    letter-spacing: -0.03em;
+}
+
+h5 {
+    font-size: 1.25em;
+    letter-spacing: -0.01em;
+}
+
+h6 {
+    font-size: 1em;
+    letter-spacing: -0.03em;
+}
+
+p, dd {
+    font-size: 1em;
+}
+
+p.indent {
+    text-indent: 2rem;
+    /* text-align: justify; */
+}
+
+a {
+    color: var(--link-1);
+}
+
+a:hover {
+    color: var(--link-2);
+}
+
+a.external:hover::after {
+    content: "°";
+}
+
+
+p, blockquote {
+    margin-bottom: 1rem;
+}
+
+blockquote {
+    margin-left: 2rem;
+}
+
+code {
+    font-family: var(--font-mono);
+}
+
+pre {
+    overflow-x: scroll;
+    margin-bottom: 1rem;
+}
+
+img {
+    width: 100%;
+}
+
+/*
+ *
+ * LISTS
+ *
+ */
+
+ul {
+    margin-left: 1.2rem;
+    margin-bottom: 1rem;
+
+    & li::marker {
+        color: var(--header-1);
+        content: "✖ ";
+    }
+}
+
+ul.tasks {
+    margin-left: 0rem;
+    margin-bottom: 1rem;
+
+    & li::marker {
+        content: none;
+    }
+}
+
+ol {
+    margin-left: 1rem;
+
+    & li::marker {
+        color: var(--header-1);
+        font-weight: bold;
+    }
+}
+
+dt {
+    font-weight: bold;
+}
+
+dt::after {
+    content: ": ";
+}
+
+dd {
+    margin-left: 1rem;
+}
+
+/*
+ *
+ * FORMS
+ *
+ */
+
+#active-workspace form {
+    width: 75%;
+    margin: auto;
+}
+
+fieldset {
+    padding-left: 2rem;
+    border: 3px dotted var(--text-1);
+
+    & legend {
+        font-size: 1em;
+        font-weight: 500;
+        font-family: var(--font-header);
+        letter-spacing: -0.01em;
+        background-color: var(--background-2);
+        color: var(--text-2);
+        padding: 0 0.5rem;
+    }
+
+    &> :not(legend) {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    & input, select, textarea {
+        /* width: 15em; */
+        padding: 0.2rem 0.1rem 0.1rem 0.1rem;
+        margin-left: 1rem;
+        font-size: 100%;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+    & input[type="date"], input[type="datetime"] {
+        width: 10em;
+    }
+
+    & input[type="radio"] {
+        appearance: none;
+    }
+
+    & input[type="radio"] {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--text-1);
+        /* Adjusts the position of the checkboxes on the text baseline */
+        vertical-align: -2px;
+        outline: none;
+        margin-right: 0.5rem;
+        margin-left: 1rem;
+    }
+
+    & input[type="radio"]::before {
+        display: block;
+        content: " ";
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 6px;
+        background-color: var(--text-1);
+        font-size: 1.2em;
+        transform: translate(0.19rem, 0.19rem) scale(0);
+    }
+
+    & input[type="radio"]:checked::before {
+        transform: translate(0.19rem, 0.19rem) scale(1);
+    }
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    width: 98%;
+    height: 340px;
+    margin: 0.5rem;
+}
+
+/* These are used for task lists */
+input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+    width: 1em;
+    height: 1em;
+    border: 1px solid var(--text-1);
+    /* Adjusts the position of the checkboxes on the text baseline */
+    vertical-align: -2px;
+    /* Set here so that Windows' High-Contrast Mode can override */
+    color: var(--text-1);
+    margin-right: 1rem;
+}
+
+input[type="checkbox"]::before {
+    content: "✖";
+    position: absolute;
+    font-size: 1em;
+    top: -0.03em;
+    right: 0.07em;
+    visibility: hidden;
+}
+
+input[type="checkbox"]:checked::before {
+    /* Use `visibility` instead of `display` to avoid recalculating layout */
+    visibility: visible;
+}
+
+input[type="checkbox"]:disabled {
+    border-color: black;
+    background: #ddd;
+    color: gray;
+}
+
+button, input[type="button"], input[type="submit"], .button-link {
+    font-family: var(--font-header);
+    letter-spacing: -0.01em;
+    background-color: var(--background-2);
+    color: var(--button-text);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    font-size: 1.2em;
+    border: none;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.button-link:hover {
+    color: var(--text-2);
+}
+
+hr {
+    margin: 1rem 0;
+    border-top: 3px dotted var(--text-1);
+    border-bottom: none;
+}
+
+
+ul.marquee {
+    animation: scroll 20s linear infinite;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-around;
+    gap: 4em;
+    min-width: 100%;
+    will-change: transform;
+    margin: 0;
+
+    & li {
+        min-width: fit-content;
+    }
+}
+
+.marquee-wrapper {
+    overflow: hidden;
+    display: flex;
+}
+
+@keyframes scroll {
+    0% {
+        -moz-transform: translateX(0);
+        -webkit-transform: translateX(0);
+        transform: translateX(0);
+    }
+
+    100% {
+        -moz-transform: translateX(calc(-100% - 4em));
+        -webkit-transform: translateX(calc(-100% - 4em));
+        transform: translateX(calc(-100% - 4em));
+    }
+}

@@ -58,10 +58,4 @@ table! {
 
 joinable!(workspace -> workspace_type (type_id));
 
-allow_tables_to_appear_in_same_query!(
-    session,
-    user,
-    workspace,
-    workspace_element,
-    workspace_type,
-);
+allow_tables_to_appear_in_same_query!(session, user, workspace, workspace_element, workspace_type,);

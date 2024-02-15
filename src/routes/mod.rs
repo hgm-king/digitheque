@@ -2,23 +2,26 @@ pub mod assets;
 pub mod user;
 pub mod workspace;
 
-use crate::{models, Context};
-use warp::{
-    filters::{self, BoxedFilter},
-    reject, Filter,
-};
+use crate::models;
+use warp::{filters::BoxedFilter, Filter};
 
-pub fn index_logged_out() -> BoxedFilter<(Option<models::user::ExpandedUser>,)> {
-    warp::path::end()
-        .and(warp::get())
-        .map(|| (None) )
-        .boxed()
-}
-
-pub fn index_logged_in() -> BoxedFilter<(Option<models::user::ExpandedUser>,)> {
+pub fn index() -> BoxedFilter<(Option<models::user::ExpandedUser>,)> {
     warp::path::end()
         .and(warp::get())
         .and(user::authenticate_cookie())
-        .map( |_, expanded_user| (Some(expanded_user)))
+        .map(|_, expanded_user| (Some(expanded_user)))
+        .or(warp::path::end().and(warp::get()).map(|| (None)))
+        .unify()
+        .boxed()
+}
+
+pub fn bebop() -> BoxedFilter<(Option<models::user::ExpandedUser>,)> {
+    warp::path("bebop.html")
+        .and(warp::path::end())
+        .and(warp::get())
+        .and(user::authenticate_cookie())
+        .map(|_, expanded_user| (Some(expanded_user)))
+        .or(warp::any().map(|| (None)))
+        .unify()
         .boxed()
 }

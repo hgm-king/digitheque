@@ -51,7 +51,7 @@ exclude_dirs = set(["dithers"])
 logging.info("Dithering all images in {} and subfolders".format(content_dir))
 logging.debug("excluding directories: {}".format("".join(exclude_dirs)))
 
-selectedColor = 'grayscale'
+selectedColor = 'low-tech'
 
 def colorize(source_image, category):
     """

@@ -45,8 +45,8 @@ async fn main() -> Result<(), ()> {
     let end = assets_api!()
         .or(user_api!())
         .or(workspace_api!())
-        .or((routes::index_logged_in().and_then(handlers::index))
-            .or(routes::index_logged_out().and_then(handlers::index)))
+        .or(routes::index().and_then(handlers::index))
+        .or(routes::bebop().and_then(handlers::bebop))
         .or(
             // surface logged in data to errors
             routes::user::logged_in_rejection().and_then(handlers::user::profile),

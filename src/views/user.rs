@@ -73,7 +73,7 @@ impl Display for StyleEdit {
             "{}",
             html! {
                 <main>
-                    <section>
+                    <section id="edit-style">
                         <h3>"Edit Style"</h3>
                         <p>{self.message.clone().unwrap_or_default()}</p>
                             <form action="/user/style" method="POST">
@@ -98,17 +98,19 @@ impl Display for PreludeEdit {
             f,
             "{}",
             html! {
-                    <main>
-                        <section>
-                            <h3>"Edit Prelude"</h3>
-                            <p>{self.message.clone().unwrap_or_default()}</p>
-                            <form action="/user/prelude" method="POST">
-                                <textarea name="prelude">{self.expanded_user.user.prelude.clone().unwrap_or(String::from("# Edit me to get started!\nMake sure to save using the button at the bottom.\n"))}</textarea>
-                                <button type="submit">"Submit"</button>
-                            </form>
-                        </section>
-                    </main>
-                }
+                <main>
+                    <section id="edit-prelude">
+                        <h3>"Edit Prelude"</h3>
+                        <p>"Here is where you can specify global functions and values for your Bebop code. Learn more about Bebop by reading the "<a href="/bebop">"spec"</a>". "</p>
+                        <p>"This code will run each time your workspaces get rendered."</p>
+                        <p>{self.message.clone().unwrap_or_default()}</p>
+                        <form action="/user/prelude" method="POST">
+                            <textarea name="prelude">{self.expanded_user.user.prelude.clone().unwrap_or(String::from("# Edit me to get started!\nMake sure to save using the button at the bottom.\n"))}</textarea>
+                            <button type="submit">"Submit"</button>
+                        </form>
+                    </section>
+                </main>
+            }
         )
     }
 }

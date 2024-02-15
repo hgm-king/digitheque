@@ -1,7 +1,10 @@
 use html_to_string_macro::html;
 use std::fmt::{self, Display};
 
-use crate::{views::common::{Footer, Header}, models::user::ExpandedUser};
+use crate::{
+    models::user::ExpandedUser,
+    views::common::{Footer, Header},
+};
 
 use super::{Body, Document, Head};
 use warp::hyper::StatusCode;
@@ -18,19 +21,23 @@ impl Display for ErrorPage {
             "{}",
             html! {
                 <main>
-                    <h1>"Error: "{self.status_code}</h1>
-                    <p>{self.message.clone()}</p>
+                    <section id="error">
+                        <h1>"Error: "{self.status_code}</h1>
+                        <p>{self.message.clone()}</p>
+                    </section>
                 </main>
             }
         )
     }
 }
 
-pub fn error_page(status_code: StatusCode, message: &str, expanded_user: Option<ExpandedUser>) -> String {
+pub fn error_page(
+    status_code: StatusCode,
+    message: &str,
+    expanded_user: Option<ExpandedUser>,
+) -> String {
     let body = Body(vec![
-        Box::new(Header {
-            expanded_user
-        }),
+        Box::new(Header { expanded_user }),
         Box::new(ErrorPage {
             status_code,
             message: message.to_string(),

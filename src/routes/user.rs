@@ -1,9 +1,9 @@
 use crate::{
-    GLOBAL_PRELUDE,
     models::{self, user::ExpandedUser},
     routes,
     utils::now,
     Context, ExpandedUserRejection, NotAuthorized, NotFound, OldCookie, ResourceError, ServerError,
+    GLOBAL_PRELUDE,
 };
 use diesel::result::{DatabaseErrorKind, Error::DatabaseError};
 use warp::{
@@ -304,11 +304,13 @@ async fn update_user_prelude(
 ) -> Result<(Context, models::user::ExpandedUser, Option<String>), warp::Rejection> {
     let mut conn = context.db_conn.get_conn();
 
-    let input = &format!(r#"
+    let input = &format!(
+        r#"
             {}
             {}
             "#,
-        GLOBAL_PRELUDE, new_prelude.prelude.clone()
+        GLOBAL_PRELUDE,
+        new_prelude.prelude.clone()
     );
     let mut env = bebop_lang::lisp::env::init_env();
     let v = bebop_lang::lisp::lisp(&mut env, input);

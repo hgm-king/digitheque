@@ -98,7 +98,7 @@ pub struct NewWorkspace {
     pub updated_at: Option<NaiveDateTime>,
     pub deleted_at: Option<NaiveDateTime>,
     pub content: Option<String>,
-    pub parent_id: i32
+    pub parent_id: i32,
 }
 
 impl NewWorkspace {
@@ -112,7 +112,7 @@ impl NewWorkspace {
             description: new_workspace.description,
             type_id: new_workspace.type_id,
             content: Some(String::from(DEFAULT_WORKSPACE_CONTENT)),
-            parent_id
+            parent_id,
         }
     }
 
@@ -237,16 +237,16 @@ pub fn update(conn: &mut PgConnection, id: i32, workspace: EditWorkspaceApi) -> 
 fn test_diesel() {
     let (parent, children) = diesel::alias!(workspace as parent, workspace as children);
     let sql = parent
-    .left_join(
-        children.on(children
-            .field(workspace::parent_id)
-            .eq(parent.field(workspace::id))),
-    )
-    .filter(parent.field(workspace::deleted_at).is_null())
-    .filter(children.field(workspace::deleted_at).is_null())
-    .filter(parent.field(workspace::user_id).eq(1))
-    .filter(children.field(workspace::user_id).eq(1))
-    .filter(parent.field(workspace::id).eq(2));
+        .left_join(
+            children.on(children
+                .field(workspace::parent_id)
+                .eq(parent.field(workspace::id))),
+        )
+        .filter(parent.field(workspace::deleted_at).is_null())
+        .filter(children.field(workspace::deleted_at).is_null())
+        .filter(parent.field(workspace::user_id).eq(1))
+        .filter(children.field(workspace::user_id).eq(1))
+        .filter(parent.field(workspace::id).eq(2));
     assert_eq!(
         diesel::debug_query::<diesel::pg::Pg, _>(&sql).to_string(),
         "SELECT `users`.`id`, `users`.`name` FROM `users` \
