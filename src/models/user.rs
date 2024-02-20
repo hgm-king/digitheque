@@ -7,6 +7,7 @@ use crate::{
 use chrono::naive::NaiveDateTime;
 use diesel::prelude::*;
 use serde::Deserialize;
+use html_to_string_macro::html;
 
 #[derive(Clone, Debug, Identifiable, Queryable, Selectable)]
 #[diesel(table_name = user)]
@@ -21,6 +22,26 @@ pub struct User {
     pub prelude: Option<String>,
 }
 
+impl User {
+    pub fn link_to_prelude() -> String {
+        html! {
+            <a href="/prelude">"Edit prelude"</a>
+        }
+    }
+
+    pub fn link_to_stylesheet() -> String {
+        html! {
+            <a href="/stylesheet">"Edit stylesheet"</a>
+        }
+    }
+
+    pub fn link_to_feed() -> String {
+        html! {
+            <a href="/feed">"Edit feed"</a>
+        }
+    }
+}
+
 #[derive(Deserialize)]
 pub struct NewUserApi {
     pub username: String,
@@ -28,11 +49,11 @@ pub struct NewUserApi {
     pub confirm_password: String,
 }
 
-impl Into<UserCredentialsEncrypted> for NewUserApi {
-    fn into(self) -> UserCredentialsEncrypted {
+impl From<NewUserApi> for UserCredentialsEncrypted {
+    fn from(creds: NewUserApi) -> Self {
         UserCredentialsEncrypted {
-            username: sanitize_html(&self.username),
-            password: encrypt(&self.password),
+            username: sanitize_html(&creds.username),
+            password: encrypt(&creds.password),
         }
     }
 }
@@ -43,11 +64,11 @@ pub struct UserCredentialsApi {
     pub password: String,
 }
 
-impl Into<UserCredentialsEncrypted> for UserCredentialsApi {
-    fn into(self) -> UserCredentialsEncrypted {
+impl From<UserCredentialsApi> for UserCredentialsEncrypted {
+    fn from(creds: UserCredentialsApi) -> Self {
         UserCredentialsEncrypted {
-            username: self.username,
-            password: encrypt(&self.password),
+            username: creds.username,
+            password: encrypt(&creds.password),
         }
     }
 }

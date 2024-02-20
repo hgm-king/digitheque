@@ -191,10 +191,8 @@ You can write in this text area using markdown. You can see an example above tha
 |(a (concat "/workspace/" id "/edit") "Edit this workspace here!" )|
 
 ### Need help?
-- [Markdown Spec](/markdown)
 - [Bebop Spec](/bebop)
-- [CSS Spec](/css)
-- [What is digitheque](/digitheque)
+- [What is digitheque](/)
 "#;
 
 const DEFAULT_PRELUDE_CONTENT: &str = r#"

@@ -1,4 +1,5 @@
 pub mod assets;
+pub mod feed;
 pub mod user;
 pub mod workspace;
 
@@ -16,12 +17,15 @@ pub fn index() -> BoxedFilter<(Option<models::user::ExpandedUser>,)> {
 }
 
 pub fn bebop() -> BoxedFilter<(Option<models::user::ExpandedUser>,)> {
-    warp::path("bebop.html")
+    warp::path("bebop")
         .and(warp::path::end())
         .and(warp::get())
         .and(user::authenticate_cookie())
         .map(|_, expanded_user| (Some(expanded_user)))
-        .or(warp::any().map(|| (None)))
+        .or(warp::path("bebop")
+            .and(warp::path::end())
+            .and(warp::get())
+            .map(|| (None)))
         .unify()
         .boxed()
 }

@@ -34,6 +34,7 @@ table! {
         deleted_at -> Nullable<Timestamp>,
         content -> Nullable<Text>,
         parent_id -> Int4,
+        is_published -> Bool,
     }
 }
 
@@ -58,4 +59,10 @@ table! {
 
 joinable!(workspace -> workspace_type (type_id));
 
-allow_tables_to_appear_in_same_query!(session, user, workspace, workspace_element, workspace_type,);
+allow_tables_to_appear_in_same_query!(
+    session,
+    user,
+    workspace,
+    workspace_element,
+    workspace_type,
+);

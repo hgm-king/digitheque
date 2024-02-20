@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod common;
 pub mod error;
+pub mod feed;
 pub mod user;
 pub mod workspace;
 

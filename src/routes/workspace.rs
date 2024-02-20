@@ -69,6 +69,25 @@ pub fn edit_workspace() -> BoxedFilter<(
         .boxed()
 }
 
+pub fn publish_workspace() -> BoxedFilter<(
+    Context,
+    models::user::ExpandedUser,
+    models::workspace::WorkspaceWithChildren,
+)> {
+    warp::path("workspace")
+        .and(warp::path::param::<i32>())
+        .and(warp::path("publish"))
+        .and(warp::path::end())
+        .and(warp::post())
+        .and(routes::user::authenticate_cookie())
+        .and(warp::body::form::<models::workspace::PublishWorkspaceApi>())
+        .and_then(with_publish_workspace)
+        .untuple_one()
+        .and_then(with_workspace)
+        .untuple_one()
+        .boxed()
+}
+
 pub async fn with_root_workspace(
     context: Context,
     expanded_user: models::user::ExpandedUser,
@@ -82,7 +101,7 @@ pub async fn with_root_workspace(
 > {
     let mut conn = context.db_conn.get_conn();
 
-    let workspace = models::workspace::read_root_by_user(&mut conn, expanded_user.user.id)
+    let workspace = models::workspace::WorkspaceWithChildren::read_root_by_user(&mut conn, expanded_user.user.id)
         .map_err(|e| {
             tracing::error!("{:?}", e);
             reject::custom(ServerError {
@@ -101,7 +120,7 @@ async fn with_update_workspace(
 ) -> Result<(i32, Context, models::user::ExpandedUser), warp::Rejection> {
     let mut conn = context.db_conn.get_conn();
 
-    models::workspace::update(&mut conn, id, edit_workspace).map_err(|e| {
+    edit_workspace.update(&mut conn, id).map_err(|e| {
         tracing::error!("{:?}", e);
         reject::custom(ServerError {
             message: e.to_string(),
@@ -111,7 +130,25 @@ async fn with_update_workspace(
     Ok((id, context, expanded_user))
 }
 
-async fn with_workspace(
+async fn with_publish_workspace(
+    id: i32,
+    context: Context,
+    expanded_user: models::user::ExpandedUser,
+    publish_workspace: models::workspace::PublishWorkspaceApi,
+) -> Result<(i32, Context, models::user::ExpandedUser), warp::Rejection> {
+    let mut conn = context.db_conn.get_conn();
+
+    publish_workspace.publish(&mut conn, id).map_err(|e| {
+        tracing::error!("{:?}", e);
+        reject::custom(ServerError {
+            message: e.to_string(),
+        })
+    })?;
+
+    Ok((id, context, expanded_user))
+}
+
+pub async fn with_workspace(
     id: i32,
     context: Context,
     expanded_user: models::user::ExpandedUser,
@@ -125,7 +162,7 @@ async fn with_workspace(
 > {
     let mut conn = context.db_conn.get_conn();
 
-    let workspace = models::workspace::read_by_user_and_id(&mut conn, expanded_user.user.id, id)
+    let workspace = models::workspace::WorkspaceWithChildren::read_by_user_and_id(&mut conn, expanded_user.user.id, id)
         .map_err(|e| {
             tracing::error!("{:?}", e);
             reject::custom(ServerError {

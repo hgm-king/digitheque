@@ -27,18 +27,6 @@ pub async fn profile_with_cookie(
     ))
 }
 
-// pub fn get_workspaces(
-//     context: Context,
-//     expanded_user: &models::user::ExpandedUser,
-// ) -> Result<Vec<models::workspace::Workspace>, warp::Rejection> {
-//     let mut conn = context.db_conn.get_conn();
-
-//     models::page::read_pages_by_user_id(&mut conn, expanded_user.user.id).map_err(|e| {
-//         log::error!("{:?}", e);
-//         warp::reject::not_found()
-//     })
-// }
-
 pub async fn logout() -> Result<impl warp::Reply, Infallible> {
     Ok(warp::reply::with_header(
         warp::reply::html(views::common::landing_page(None)),

@@ -59,10 +59,81 @@ aside {
         margin-bottom: 0.25em;
     }
 
+    & h2 {
+        margin-bottom: 0.5em;
+        text-decoration: underline;
+    }
+
     & li {
         margin-bottom: 0.25em;
     }
+
+    & summary {
+        font-family: var(--font-header);
+        margin: 0;
+        margin-bottom: 0.25em;
+        font-weight: 700;
+        line-height: 1em;
+        font-size: 1.75rem;
+        letter-spacing: -0.03em;
+    }
+
+    & summary:hover {
+        /* color: var(--brand-1); */
+        /* text-decoration: underline; */
+    }
+
+    #workspace-actions {
+        margin: 0;
+
+        & li::marker {
+            content: none;
+        }
+    
+        & li {
+            list-style: none;
+            font-family: var(--font-header);
+            color: var(--header-1);
+            
+    
+            & a {
+                margin: 0;
+                margin-bottom: 0.25em;
+                font-weight: 700;
+                line-height: 1em;
+                font-size: 1.75rem;
+                letter-spacing: -0.03em;
+                text-decoration: none;
+                color: var(--brand-1);
+            }
+        }
+    
+        & a:hover {
+            text-decoration: underline;
+        }
+    }
+    
+    #publish-workspace {
+        & .submit-publish {
+            background: none;
+            font-family: var(--font-header);
+            color: var(--brand-1);
+            margin: 0;
+            margin-bottom: 0.25em;
+            font-weight: 700;
+            line-height: 1em;
+            font-size: 1.75rem;
+            letter-spacing: -0.03em;
+            padding: 0;
+        }
+    
+        & .submit-publish:hover {
+            text-decoration: underline;
+        }
+    }
 }
+
+
 
 #workspace {
     & h1, h2, h3, h4, h5, h6 {
@@ -90,6 +161,7 @@ header {
                 letter-spacing: -0.01em;
                 font-weight: 700;
                 margin-right: 1rem;
+                list-style: none;
 
                 & a {
                     text-decoration: none;
@@ -121,7 +193,7 @@ header {
         }
 
         & a:hover {
-            /* color: var(--brand-1); */
+            color: var(--brand-1);
         }
     }
 }
@@ -264,7 +336,7 @@ ul.tasks {
 }
 
 ol {
-    margin-left: 1rem;
+    margin-left: 1.5rem;
 
     & li::marker {
         color: var(--header-1);
