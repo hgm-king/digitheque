@@ -23,6 +23,59 @@ pub struct User {
 }
 
 impl User {
+    pub fn new(conn: &mut PgConnection, new_user: &NewUser) -> Result<Self, diesel::result::Error> {
+        diesel::insert_into(user::table)
+            .values(new_user)
+            .get_result(conn)
+    }
+    
+    pub fn read_by_id(conn: &mut PgConnection, id: i32) -> Result<Self, diesel::result::Error> {
+        user::table
+            .filter(user::id.eq(id))
+            .filter(user::deleted_at.is_null())
+            .first::<Self>(conn)
+    }
+    
+    pub fn read_by_username(conn: &mut PgConnection, username: String) -> Result<Self, diesel::result::Error> {
+        user::table
+            .filter(user::username.eq(username))
+            .filter(user::deleted_at.is_null())
+            .first::<Self>(conn)
+    }
+    
+    pub fn read_by_credentials(
+        conn: &mut PgConnection,
+        credentials: UserCredentialsApi,
+    ) -> Result<Self, diesel::result::Error> {
+        let user: User = user::table
+            .filter(user::username.eq(credentials.username))
+            .filter(user::deleted_at.is_null())
+            .first::<User>(conn)?;
+    
+        if verify(&credentials.password, &user.password) {
+            Ok(user)
+        } else {
+            Err(diesel::NotFound)
+        }
+    }
+
+    pub fn delete(&self, conn: &mut PgConnection) -> QueryResult<usize> {
+        diesel::update(self)
+            .set((user::deleted_at.eq(Some(now())),))
+            .execute(conn)
+    }
+    
+    pub fn update(&self, conn: &mut PgConnection) -> QueryResult<usize> {
+        diesel::update(user::table)
+            .filter(user::id.eq(self.id))
+            .set((
+                user::updated_at.eq(Some(now())),
+                user::style.eq(self.style.clone()),
+                user::prelude.eq(self.prelude.clone()),
+            ))
+            .execute(conn)
+    }
+
     pub fn link_to_prelude() -> String {
         html! {
             <a href="/prelude">"Edit prelude"</a>
@@ -110,58 +163,8 @@ impl NewUser {
     }
 
     pub fn insert(&self, conn: &mut PgConnection) -> Result<User, diesel::result::Error> {
-        create(conn, self)
+        User::new(conn, self)
     }
-}
-
-pub fn create(conn: &mut PgConnection, new_user: &NewUser) -> Result<User, diesel::result::Error> {
-    diesel::insert_into(user::table)
-        .values(new_user)
-        .get_result(conn)
-}
-
-pub fn read(conn: &mut PgConnection) -> Result<Vec<User>, diesel::result::Error> {
-    user::table.load::<User>(conn)
-}
-
-pub fn read_by_id(conn: &mut PgConnection, id: i32) -> Result<User, diesel::result::Error> {
-    user::table
-        .filter(user::id.eq(id))
-        .filter(user::deleted_at.is_null())
-        .first::<User>(conn)
-}
-
-pub fn read_by_credentials(
-    conn: &mut PgConnection,
-    credentials: UserCredentialsApi,
-) -> Result<User, diesel::result::Error> {
-    let user: User = user::table
-        .filter(user::username.eq(credentials.username))
-        .filter(user::deleted_at.is_null())
-        .first::<User>(conn)?;
-
-    if verify(&credentials.password, &user.password) {
-        Ok(user)
-    } else {
-        Err(diesel::NotFound)
-    }
-}
-
-pub fn delete(conn: &mut PgConnection, user: &User) -> QueryResult<usize> {
-    diesel::update(user)
-        .set((user::deleted_at.eq(Some(now())),))
-        .execute(conn)
-}
-
-pub fn update(conn: &mut PgConnection, user: &mut User) -> QueryResult<usize> {
-    diesel::update(user::table)
-        .filter(user::id.eq(user.id))
-        .set((
-            user::updated_at.eq(Some(now())),
-            user::style.eq(user.style.clone()),
-            user::prelude.eq(user.prelude.clone()),
-        ))
-        .execute(conn)
 }
 
 pub fn read_user_by_session(

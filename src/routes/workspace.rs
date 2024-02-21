@@ -16,7 +16,7 @@ pub fn workspace() -> BoxedFilter<(
         .boxed()
 }
 
-pub fn workspace_edit() -> BoxedFilter<(
+pub fn edit_page() -> BoxedFilter<(
     Context,
     models::user::ExpandedUser,
     models::workspace::WorkspaceWithChildren,
@@ -32,13 +32,14 @@ pub fn workspace_edit() -> BoxedFilter<(
         .boxed()
 }
 
-pub fn create_workspace() -> BoxedFilter<(
+pub fn new() -> BoxedFilter<(
     Context,
     models::user::ExpandedUser,
     models::workspace::WorkspaceWithChildren,
 )> {
     warp::path("workspace")
         .and(warp::path::param::<i32>())
+        .and(warp::path("new"))
         .and(warp::path::end())
         .and(warp::post())
         .and(routes::user::authenticate_cookie())
@@ -50,14 +51,13 @@ pub fn create_workspace() -> BoxedFilter<(
         .boxed()
 }
 
-pub fn edit_workspace() -> BoxedFilter<(
+pub fn edit() -> BoxedFilter<(
     Context,
     models::user::ExpandedUser,
     models::workspace::WorkspaceWithChildren,
 )> {
     warp::path("workspace")
         .and(warp::path::param::<i32>())
-        .and(warp::path("edit"))
         .and(warp::path::end())
         .and(warp::post())
         .and(routes::user::authenticate_cookie())
@@ -69,7 +69,7 @@ pub fn edit_workspace() -> BoxedFilter<(
         .boxed()
 }
 
-pub fn publish_workspace() -> BoxedFilter<(
+pub fn publish() -> BoxedFilter<(
     Context,
     models::user::ExpandedUser,
     models::workspace::WorkspaceWithChildren,

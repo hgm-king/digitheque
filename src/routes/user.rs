@@ -78,7 +78,7 @@ async fn with_user_by_credentials(
 ) -> Result<(Context, models::user::User), warp::Rejection> {
     let mut conn = context.db_conn.get_conn();
     tracing::info!("Looking for user {}", credentials.username);
-    let user = models::user::read_by_credentials(&mut conn, credentials)
+    let user = models::user::User::read_by_credentials(&mut conn, credentials)
         .map_err(|_| reject::custom(NotFound))?;
     Ok((context, user))
 }
@@ -262,19 +262,19 @@ pub fn read_cookie() -> BoxedFilter<(Context, models::session::Session)> {
 }
 
 pub fn update_style() -> BoxedFilter<(Context, models::user::ExpandedUser, Option<String>)> {
-    warp::path("style")
+    warp::path("stylesheet")
         .and(warp::path::end())
         .and(
             warp::post()
                 .and(routes::user::authenticate_cookie())
                 .and(warp::body::form::<models::user::UpdateStyleApi>())
                 .and_then(update_user_style)
-                .untuple_one(),
+                .untuple_one()
+                .or(warp::get()
+                    .and(routes::user::authenticate_cookie())
+                    .map(|context, user| (context, user, None))
+                    .untuple_one()),
         )
-        .or(warp::get()
-            .and(routes::user::authenticate_cookie())
-            .map(|context, user| (context, user, None))
-            .untuple_one())
         .unify()
         .boxed()
 }
@@ -287,12 +287,12 @@ pub fn update_prelude() -> BoxedFilter<(Context, models::user::ExpandedUser, Opt
                 .and(routes::user::authenticate_cookie())
                 .and(warp::body::form::<models::user::UpdatePreludeApi>())
                 .and_then(update_user_prelude)
-                .untuple_one(),
+                .untuple_one()
+                .or(warp::get()
+                    .and(routes::user::authenticate_cookie())
+                    .map(|context, user| (context, user, None))
+                    .untuple_one()),
         )
-        .or(warp::get()
-            .and(routes::user::authenticate_cookie())
-            .map(|context, user| (context, user, None))
-            .untuple_one())
         .unify()
         .boxed()
 }
@@ -316,7 +316,7 @@ async fn update_user_prelude(
     let v = bebop_lang::lisp::lisp(&mut env, input);
 
     expanded_user.user.prelude = Some(new_prelude.prelude);
-    models::user::update(&mut conn, &mut expanded_user.user).map_err(|e| {
+    expanded_user.user.update(&mut conn).map_err(|e| {
         tracing::error!("{:?}", e);
         reject::custom(ServerError {
             message: e.to_string(),
@@ -334,7 +334,7 @@ async fn update_user_style(
     let mut conn = context.db_conn.get_conn();
 
     expanded_user.user.style = Some(new_style.style);
-    models::user::update(&mut conn, &mut expanded_user.user).map_err(|e| {
+    expanded_user.user.update(&mut conn).map_err(|e| {
         tracing::error!("{:?}", e);
         reject::custom(ServerError {
             message: e.to_string(),

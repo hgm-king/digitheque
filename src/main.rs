@@ -15,7 +15,7 @@ use digitheque::{
     assets_api,
     config::Config,
     db_conn::DbConn,
-    handle_rejections, handlers, routes, user_api,
+    handle_rejections, handlers, routes, user_api, feed_api,
     utils::{load_certs, load_private_key},
     workspace_api, Context,
 };
@@ -47,6 +47,7 @@ async fn main() -> Result<(), ()> {
         .or(workspace_api!())
         .or(routes::index().and_then(handlers::index))
         .or(routes::bebop().and_then(handlers::bebop))
+        .or(feed_api!())
         .or(
             // surface logged in data to errors
             routes::user::logged_in_rejection().and_then(handlers::user::profile),

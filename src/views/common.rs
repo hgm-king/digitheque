@@ -1,7 +1,7 @@
 use html_to_string_macro::html;
 use std::fmt::{self, Display};
 
-use crate::{models::user::ExpandedUser, GLOBAL_PRELUDE};
+use crate::models::user::ExpandedUser;
 
 use super::{Body, Document, Head};
 
@@ -22,13 +22,13 @@ impl Display for Header {
                             {
                                 match &self.expanded_user {
                                     None => html! {
-                                        <li><a href="/user/login">"Login"</a></li>
+                                        <li><a href="/login">"Login"</a></li>
                                     },
                                     Some(user) => html! {
-                                        <li><a href="/user">{&user.user.username}</a></li>
-                                        <li><a href="/user/logout">"Logout"</a></li>
-                                        <li><a href="/user/feed">"Feed"</a></li>
-                                        <li><a href="/user/prelude">"Prelude"</a></li>
+                                        <li><a href="/root">{&user.user.username}</a></li>
+                                        <li><a href="/logout">"Logout"</a></li>
+                                        <li><a href="/feed">"Feed"</a></li>
+                                        <li><a href="/prelude">"Prelude"</a></li>
                                     }
                                 }
                             }
@@ -75,10 +75,10 @@ impl Display for Landing {
                         <span class="sub-title">"Draft and publish your custom"<br />"magazines, pamphlets, and notes."</span>
                         <div class="cta">{
                             if self.expanded_user.is_none() { html! {
-                                <a class="button-link" href="/user/signup">"Get started"</a>
+                                <a class="button-link" href="/signup">"Get started"</a>
                             } }
                             else  { html! {
-                                <a class="button-link" href="/user/">"View profile"</a>
+                                <a class="button-link" href="/root">"View profile"</a>
                             }
                         } }
                 </div>

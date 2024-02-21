@@ -3,11 +3,12 @@ use crate::{
     schema::workspace,
     utils::{now, sanitize_html},
     DEFAULT_WORKSPACE_CONTENT,
+    DOMAIN
 };
 use chrono::naive::NaiveDateTime;
 use diesel::prelude::*;
 use html_to_string_macro::html;
-use rss::{Channel, ChannelBuilder};
+// use rss::{Channel, ChannelBuilder};
 use serde::Deserialize;
 use std::fmt::{self, Display};
 
@@ -104,9 +105,7 @@ impl Workspace {
                 {
                     if self.is_root() {
                         html! {
-                            <li>{User::link_to_feed()}</li>
                             <li>{User::link_to_prelude()}</li>
-                            <li>{User::link_to_stylesheet()}</li>
                         }
                     } else {
                         html! {
@@ -137,7 +136,7 @@ impl Workspace {
     // how do we get the API type in here...
     pub fn new_workspace_form(&self) -> String {
         html! {
-            <form action={format!("/workspace/{}", self.id)} method="POST">
+            <form action={format!("/workspace/{}/new", self.id)} method="POST">
                 <label>
                     <span>"Name"</span>
                     <input type="text" name="name" required max=64 />
@@ -172,7 +171,7 @@ impl Workspace {
 
     pub fn edit_self_form(&self) -> String {
         html! {
-            <form action={format!("/workspace/{}/edit", self.id)} method="POST">
+            <form action={format!("/workspace/{}", self.id)} method="POST">
                 <label>
                     <span>"Name"</span>
                     <input type="text" name="name" value={self.name.clone()} required max=64 />
@@ -241,6 +240,16 @@ impl Workspace {
         diesel::update(self)
             .set((workspace::deleted_at.eq(Some(now())),))
             .execute(conn)
+    }
+
+    pub fn to_rss_item(&self, author: String) -> rss::Item {
+        rss::ItemBuilder::default()
+            .title(Some(self.name.clone()))
+            .author(Some(author.clone()))
+            .description(Some(self.description.clone()))
+            .link(Some(format!("{}/{}/workspace/{}", DOMAIN, author, self.id)))
+            .pub_date(Some(self.updated_at.unwrap_or_default().and_utc().to_rfc2822()))
+            .build()
     }
 }
 

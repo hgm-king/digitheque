@@ -18,11 +18,11 @@ impl Display for Signup {
             html! {
                 <main id="signup">
                     <h1>"Signup form"</h1>
-                    <form action="/user/signup" method="POST">
+                    <form action="/signup" method="POST">
                         <fieldset class="signup-fields">
                             <legend>"User credentials"</legend>
                             <div>
-                                <a href="/user/login">"Have an account?"</a>
+                                <a href="/login">"Have an account?"</a>
                             </div>
                             <div>
                                 <label>
@@ -64,11 +64,11 @@ impl Display for Login {
             html! {
                 <main id="login">
                     <h1>"Login form"</h1>
-                    <form action="/user/login" method="POST">
+                    <form action="/login" method="POST">
                         <fieldset class="login-fields">
                             <legend>"User credentials"</legend>
                             <div>
-                                <a href="/user/signup">"Need an account?"</a>
+                                <a href="/signup">"Need an account?"</a>
                             </div>
                             <div>
                                 <label>

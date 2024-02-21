@@ -76,7 +76,7 @@ impl Display for StyleEdit {
                     <section id="edit-style">
                         <h3>"Edit Style"</h3>
                         <p>{self.message.clone().unwrap_or_default()}</p>
-                            <form action="/user/style" method="POST">
+                            <form action="/style" method="POST">
                                 <textarea name="style">{self.expanded_user.user.style.clone().unwrap_or(String::from("# Edit me to get started!\nMake sure to save using the button at the bottom.\n"))}</textarea>
                                 <button type="submit">"Submit"</button>
                             </form>
@@ -104,7 +104,7 @@ impl Display for PreludeEdit {
                         <p>"Here is where you can specify global functions and values for your Bebop code. Learn more about Bebop by reading the "<a href="/bebop">"spec"</a>". "</p>
                         <p>"This code will run each time your workspaces get rendered."</p>
                         <p>{self.message.clone().unwrap_or_default()}</p>
-                        <form action="/user/prelude" method="POST">
+                        <form action="/prelude" method="POST">
                             <textarea name="prelude">{self.expanded_user.user.prelude.clone().unwrap_or(String::from("# Edit me to get started!\nMake sure to save using the button at the bottom.\n"))}</textarea>
                             <button type="submit">"Submit"</button>
                         </form>

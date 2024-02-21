@@ -51,8 +51,6 @@ body {
     font-kerning: normal;
 }
 
-main {
-}
 
 aside {
     & h3 {
@@ -76,11 +74,6 @@ aside {
         line-height: 1em;
         font-size: 1.75rem;
         letter-spacing: -0.03em;
-    }
-
-    & summary:hover {
-        /* color: var(--brand-1); */
-        /* text-decoration: underline; */
     }
 
     #workspace-actions {

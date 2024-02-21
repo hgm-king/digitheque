@@ -15,6 +15,9 @@ use models::user::ExpandedUser;
 use std::sync::Arc;
 use warp::{hyper::StatusCode, reject, Rejection, Reply};
 
+const DOMAIN: &str = "https://digitheque.io";
+const USER_AGENT: &str = "Digitheque RSS";
+
 #[derive(Debug)]
 struct NotFound;
 impl reject::Reject for NotFound {}
@@ -177,6 +180,8 @@ pub async fn handle_rejections(err: Rejection) -> Result<impl Reply, Rejection> 
     // }
 }
 
+
+
 const DEFAULT_WORKSPACE_CONTENT: &str = r#"
 |
 (h1 title)
@@ -185,7 +190,7 @@ const DEFAULT_WORKSPACE_CONTENT: &str = r#"
 |
 
 ### Enjoy your new workspace
-This is a program that gets ran each time it is viewed. You can write [Bebop](/bebop) to do all sorts of cool things.
+This is a program that gets ran each time it is viewed. You can write [Bebop](/about/bebop) to do all sorts of cool things.
 You can write in this text area using markdown. You can see an example above that uses the LISP inline. `title` and `description` are special keywords that are defined for each workspace. There are a bunch of HTML functions that you can use. as well to write functions and use typical functional programming patterns.
 
 |(a (concat "/workspace/" id "/edit") "Edit this workspace here!" )|
@@ -196,7 +201,7 @@ You can write in this text area using markdown. You can see an example above tha
 "#;
 
 const DEFAULT_PRELUDE_CONTENT: &str = r#"
-(concat "Hello from Prelude! This is executed at the beginning of each of your programs :) " (a "/user/prelude" "Edit your global prelude here!"))
+(concat "Hello from Prelude! This is executed at the beginning of each of your programs :) " (a "/prelude" "Edit your global prelude here!"))
 "#;
 
 const GLOBAL_PRELUDE: &str = r#"concat
