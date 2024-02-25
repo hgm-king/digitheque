@@ -8,6 +8,7 @@ use crate::{
     GLOBAL_PRELUDE,
 };
 
+#[derive(Clone)]
 pub struct WorkspacePage {
     expanded_user: models::user::ExpandedUser,
     workspace: models::workspace::WorkspaceWithChildren,
@@ -43,6 +44,7 @@ impl Display for WorkspacePage {
     }
 }
 
+#[derive(Clone)]
 pub struct WorkspaceEdit {
     _expanded_user: models::user::ExpandedUser,
     workspace: models::workspace::WorkspaceWithChildren,
@@ -91,12 +93,15 @@ pub fn workspace_page(
     body.0.push(Box::new(header));
     body.0.push(Box::new(WorkspacePage {
         expanded_user,
-        workspace,
+        workspace: workspace.clone(),
     }));
     body.0.push(Box::new(Footer));
 
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: workspace.workspace.name,
+            description: workspace.workspace.description
+        },
         body: &body,
     };
     format!("{}", html)
@@ -114,12 +119,15 @@ pub fn edit_workspace_page(
     body.0.push(Box::new(header));
     body.0.push(Box::new(WorkspaceEdit {
         _expanded_user: expanded_user,
-        workspace,
+        workspace: workspace.clone(),
     }));
     body.0.push(Box::new(Footer));
 
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: workspace.workspace.name,
+            description: workspace.workspace.description
+        },
         body: &body,
     };
     format!("{}", html)

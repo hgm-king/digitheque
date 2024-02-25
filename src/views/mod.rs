@@ -9,6 +9,8 @@ use std::fmt::{self, Display};
 
 use html_to_string_macro::html;
 
+use crate::DOMAIN;
+
 pub struct Document<'a> {
     pub head: &'a Head,
     pub body: &'a Body,
@@ -30,7 +32,10 @@ impl<'a> Display for Document<'a> {
     }
 }
 
-pub struct Head;
+pub struct Head {
+    title: String,
+    description: String,
+}
 
 impl Display for Head {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -41,9 +46,15 @@ impl Display for Head {
                 <head>
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                     <meta charset="utf-8" />
-                    <title>"Digitheque"</title>
+                    <title>{self.title.clone()}</title>
+                    <meta property="description" content={self.description.clone()} />
                     <link rel="stylesheet" href="/styles/fonts.css" />
                     <link rel="stylesheet" href="/styles/style.css" />
+                    <meta property="og:title" content={self.title.clone()} />
+                    <meta property="og:type" content="website" />
+                    <meta property="og:URL" content={DOMAIN} />
+                    <meta property="og:image" content={format!("{}/digitheque.png", DOMAIN)} />
+                    <meta property="og:description" content={self.description.clone()} />
                 </head>
             }
         )

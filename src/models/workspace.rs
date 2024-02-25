@@ -2,8 +2,7 @@ use crate::{
     models::user::User,
     schema::workspace,
     utils::{now, sanitize_html},
-    DEFAULT_WORKSPACE_CONTENT,
-    DOMAIN
+    DEFAULT_WORKSPACE_CONTENT, DOMAIN,
 };
 use chrono::naive::NaiveDateTime;
 use diesel::prelude::*;
@@ -217,6 +216,8 @@ impl Workspace {
             lisp
         );
 
+        tracing::info!("{}", input);
+
         // execute
         let v = bebop_lang::lisp::lisp(&mut env, input);
         v
@@ -245,14 +246,20 @@ impl Workspace {
     pub fn to_rss_item(&self, author: String) -> rss::Item {
         rss::ItemBuilder::default()
             .title(Some(self.name.clone()))
-            .author(Some(author.clone()))
             .description(Some(self.description.clone()))
             .link(Some(format!("{}/{}/workspace/{}", DOMAIN, author, self.id)))
-            .pub_date(Some(self.updated_at.unwrap_or_default().and_utc().to_rfc2822()))
+            .guid(Some(rss::Guid {
+                value: format!("{}/{}/workspace/{}", DOMAIN, author, self.id),
+                permalink: true,
+            }))
+            .pub_date(Some(
+                self.updated_at.unwrap_or_default().and_utc().to_rfc2822(),
+            ))
             .build()
     }
 }
 
+#[derive(Clone)]
 pub struct WorkspaceWithChildren {
     pub workspace: Workspace,
     pub children: Vec<Workspace>,
@@ -460,25 +467,4 @@ impl NewWorkspace {
     pub fn insert(&self, conn: &mut PgConnection) -> Result<Workspace, diesel::result::Error> {
         Workspace::new(conn, self)
     }
-}
-
-#[test]
-fn test_diesel() {
-    let (parent, children) = diesel::alias!(workspace as parent, workspace as children);
-    let sql = parent
-        .left_join(
-            children.on(children
-                .field(workspace::parent_id)
-                .eq(parent.field(workspace::id))),
-        )
-        .filter(parent.field(workspace::deleted_at).is_null())
-        .filter(children.field(workspace::deleted_at).is_null())
-        .filter(parent.field(workspace::user_id).eq(1))
-        .filter(children.field(workspace::user_id).eq(1))
-        .filter(parent.field(workspace::id).eq(2));
-    assert_eq!(
-        diesel::debug_query::<diesel::pg::Pg, _>(&sql).to_string(),
-        "SELECT `users`.`id`, `users`.`name` FROM `users` \
-        WHERE (`users`.`id` = ?) -- binds: [1]"
-    );
 }

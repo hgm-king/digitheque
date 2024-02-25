@@ -263,7 +263,6 @@
     #workspace-container {
         grid-template-columns: subgrid;
         grid-template-rows: none;
-        grid-row: 2 / 9;
     }
     
     aside {
@@ -276,6 +275,10 @@
         grid-column: 2 / -1;
         grid-row: 1 / -1;
         overflow: scroll;
+    }
+
+    #workspace-feed {
+        grid-column: 1 / -1;
     }
     
     header {

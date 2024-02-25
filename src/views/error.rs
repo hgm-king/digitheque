@@ -45,7 +45,10 @@ pub fn error_page(
         Box::new(Footer),
     ]);
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: "Digitheque: Error".to_string(),
+            description: "Digitheque: Online Publishing! Draft and publish your custom magazines, pamphlets, and notes.".to_string()
+        },
         body: &body,
     };
     format!("{}", html)

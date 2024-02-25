@@ -1,4 +1,4 @@
-use crate::{models, Context};
+use crate::{models, views, Context};
 
 pub async fn feed(
     _context: Context,
@@ -11,4 +11,14 @@ pub async fn feed(
         "Content-Type",
         "text/xml"
     ))
+}
+
+pub async fn workspace(
+    _context: Context,
+    expanded_user: Option<models::user::ExpandedUser>,
+    workspace: models::feed::FeedWorkspace,
+) -> Result<impl warp::Reply, warp::Rejection> {
+    let workspace_html = views::feed::workspace_page(expanded_user, workspace);
+
+    Ok(warp::reply::html(workspace_html))
 }

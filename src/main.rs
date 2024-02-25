@@ -75,7 +75,7 @@ async fn main() -> Result<(), ()> {
         .parse::<SocketAddr>()
         .expect("Addr to parse correctly");
 
-    // tracing::info!("👂 Listening on {}", socket_address);
+    tracing::info!("👂 Listening on {}", socket_address);
 
     // tracing::info!("🔐 TLS Enabled!");
     // // Load public certificate.

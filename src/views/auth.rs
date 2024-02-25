@@ -24,22 +24,24 @@ impl Display for Signup {
                             <div>
                                 <a href="/login">"Have an account?"</a>
                             </div>
+
                             <div>
                                 <label>
                                     <span>"Username"</span>
-                                    <input type="text" name="username" required max=48 />
+                                    <input type="text" name="username" required max=48 pattern="[a-zA-Z0-9]+" />
                                 </label>
+                                <small>"Use only letters and numbers, please"</small>
                             </div>
                             <div>
                                 <label>
                                     <span>"Password"</span>
-                                    <input type="password" name="password" max=48 />
+                                    <input type="password" name="password" required max=48 />
                                 </label>
                             </div>
                             <div>
                                 <label>
                                     <span>"Confirm Password"</span>
-                                    <input type="password" name="confirm_password" max=48 />
+                                    <input type="password" name="confirm_password" required max=48 />
                                 </label>
                             </div>
                             <div class="error">{self.error.clone()}</div>
@@ -79,7 +81,7 @@ impl Display for Login {
                             <div>
                                 <label>
                                     <span>"Password"</span>
-                                    <input type="password" name="password" max=48 />
+                                    <input type="password" name="password" required max=48 />
                                 </label>
                             </div>
                             <div class="error">{self.error.clone()}</div>
@@ -103,7 +105,10 @@ pub fn login_form(error: Option<String>) -> String {
         Box::new(Footer),
     ]);
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: "Login".to_string(),
+            description: "Login to Digitheque".to_string()
+        },
         body: &body,
     };
     html.to_string()
@@ -120,7 +125,10 @@ pub fn signup_form<'a>(error: Option<String>) -> String {
         Box::new(Footer),
     ]);
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: "Signup".to_string(),
+            description: "Signup to Digitheque".to_string()
+        },
         body: &body,
     };
     html.to_string()

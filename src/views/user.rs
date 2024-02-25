@@ -32,7 +32,10 @@ pub fn style_edit_page(
     body.0.push(Box::new(Footer));
 
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: "Digitheque".to_string(),
+            description: "Digitheque: Online Publishing! Draft and publish your custom magazines, pamphlets, and notes.".to_string()
+        },
         body: &body,
     };
     format!("{}", html)
@@ -55,7 +58,10 @@ pub fn prelude_edit_page(
     body.0.push(Box::new(Footer));
 
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: "Digitheque".to_string(),
+            description: "Digitheque: Online Publishing! Draft and publish your custom magazines, pamphlets, and notes.".to_string()
+        },
         body: &body,
     };
     format!("{}", html)

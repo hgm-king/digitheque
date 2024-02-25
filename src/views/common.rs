@@ -27,7 +27,7 @@ impl Display for Header {
                                     Some(user) => html! {
                                         <li><a href="/root">{&user.user.username}</a></li>
                                         <li><a href="/logout">"Logout"</a></li>
-                                        <li><a href="/feed">"Feed"</a></li>
+                                        <li><a href={format!("/{}/rss", &user.user.username)}>"Feed"</a></li>
                                         <li><a href="/prelude">"Prelude"</a></li>
                                     }
                                 }
@@ -145,7 +145,10 @@ pub fn landing_page(expanded_user: Option<ExpandedUser>) -> String {
         Box::new(Footer),
     ]);
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: "Digitheque".to_string(),
+            description: "Digitheque: Online Publishing! Draft and publish your custom magazines, pamphlets, and notes.".to_string()
+        },
         body: &body,
     };
     format!("{}", html)
@@ -497,7 +500,10 @@ pub fn bebop_page(expanded_user: Option<ExpandedUser>) -> String {
         Box::new(Footer),
     ]);
     let html = Document {
-        head: &Head,
+        head: &Head {
+            title: "Bebop".to_string(),
+            description: "Digitheque: Online Publishing! Draft and publish your custom magazines, pamphlets, and notes.".to_string()
+        },
         body: &body,
     };
     format!("{}", html)
