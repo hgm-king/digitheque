@@ -46,7 +46,7 @@ pub fn error_page(
     ]);
     let html = Document {
         head: &Head {
-            title: "Digitheque: Error".to_string(),
+            title: format!("Digitheque {}", status_code),
             description: "Digitheque: Online Publishing! Draft and publish your custom magazines, pamphlets, and notes.".to_string()
         },
         body: &body,

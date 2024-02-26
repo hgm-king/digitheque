@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://digitheque.io/</loc>
+        <lastmod>2024-02-26T13:41:42+00:00</lastmod>
+        <priority>1.00</priority>
+    </url>
+    <url>
+        <loc>https://digitheque.io/login</loc>
+        <lastmod>2024-02-26T13:41:42+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://digitheque.io/signup</loc>
+        <lastmod>2024-02-26T13:41:42+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://digitheque.io/bebop</loc>
+        <lastmod>2024-02-26T13:41:42+00:00</lastmod>
+        <priority>0.80</priority>
+    </url>
+</urlset>

@@ -33,6 +33,7 @@ impl<'a> Display for Document<'a> {
 }
 
 pub struct Head {
+    url: String,
     title: String,
     description: String,
 }
@@ -48,13 +49,15 @@ impl Display for Head {
                     <meta charset="utf-8" />
                     <title>{self.title.clone()}</title>
                     <meta property="description" content={self.description.clone()} />
-                    <link rel="stylesheet" href="/styles/fonts.css" />
-                    <link rel="stylesheet" href="/styles/style.css" />
                     <meta property="og:title" content={self.title.clone()} />
                     <meta property="og:type" content="website" />
-                    <meta property="og:URL" content={DOMAIN} />
+                    <meta property="og:url" content={format!("{}/{}", DOMAIN, self.url.clone())} />
                     <meta property="og:image" content={format!("{}/digitheque.png", DOMAIN)} />
                     <meta property="og:description" content={self.description.clone()} />
+                    <link rel="stylesheet" href="/styles/fonts.css" />
+                    <link rel="stylesheet" href="/styles/style.css" />
+                    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+                    <link rel="manifest" href="manifest.json" />
                 </head>
             }
         )
